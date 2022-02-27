@@ -4,7 +4,11 @@ import SwiftUI
 struct iOSApp: App {
 	var body: some Scene {
 		WindowGroup {
-			ContentView()
+            ReceiptsView(
+                router: ReceiptsRouter(
+                    isPresented: .constant(false)
+                )
+            )
 		}
 	}
 }
