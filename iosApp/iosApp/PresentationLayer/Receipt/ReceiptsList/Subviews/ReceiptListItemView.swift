@@ -5,18 +5,10 @@ struct ReceiptListItemView: View {
     let receipt: Receipt
     var body: some View {
         VStack(alignment: .leading) {
-            ZStack(alignment: .topTrailing) {
-                AsyncImage(
-                    url: receipt.imageURL,
-                    scale: 1.0,
-                    content: { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    },
-                    placeholder: {
-                        ProgressView()
-                    }
+            ReceiptImageView(
+                model: .init(
+                    imageURL: receipt.imageURL,
+                    isLiked: receipt.favourite
                 )
                 .frame(minHeight: 165 ,maxHeight: 165)
                 .cornerRadius(18)
@@ -49,7 +41,6 @@ struct ReceiptListItemView: View {
         .background(receipt.favourite ? Colors.orange: .gray )
         .clipShape(Circle())
     }
-}
 
 #if DEBUG
 struct ReceiptListItemView_Previews: PreviewProvider {
@@ -62,7 +53,7 @@ struct ReceiptListItemView_Previews: PreviewProvider {
                 favourite: true
             )
         )
-            .previewLayout(.device)
+            .previewLayout(.sizeThatFits)
     }
 }
 #endif

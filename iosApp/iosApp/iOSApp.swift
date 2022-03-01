@@ -4,7 +4,7 @@ import SwiftUI
 struct iOSApp: App {
 	var body: some Scene {
 		WindowGroup {
-            ReceiptsView(
+            ReceiptsListView(
                 router: ReceiptsRouter(
                     isPresented: .constant(false)
                 ),
