@@ -1,16 +1,24 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
     id("com.android.library")
     id("com.squareup.sqldelight")
+    kotlin("plugin.serialization")
 }
+
+version = "1.0"
+val ktorVersion = "1.6.7"
+val serializationVersion = "1.0.0-RC"
+val coroutinesVersion = "1.6.0-native-mt"
+val logbackVersion = "1.2.10"
+val sql_delight_version = "1.5.3"
+val koin_version= "3.1.2"
 
 kotlin {
     android()
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64(),
+        //iosSimulatorArm64() sure all ios dependencies support this target
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
@@ -18,60 +26,75 @@ kotlin {
     }
 
     sourceSets {
-        /* Main source sets */
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("co.touchlab:kermit:1.0.0")
-                implementation("io.ktor:ktor-client-core:2.0.0-beta-1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.1")
-
-                implementation("com.squareup.sqldelight:coroutines-extensions:1.5.3")
-                implementation("io.github.aakira:napier:2.3.0")
-
-                implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.0-beta01")
-                implementation("com.arkivanov.mvikotlin:mvikotlin-main:3.0.0-beta01")
-                implementation("com.arkivanov.mvikotlin:mvikotlin-logging:3.0.0-beta01")
-                implementation("com.arkivanov.mvikotlin:mvikotlin-timetravel:3.0.0-beta01")
-                implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:3.0.0-beta01")
+                implementation("ch.qos.logback:logback-classic:$logbackVersion")
+                implementation("com.squareup.sqldelight:runtime:$sql_delight_version")
+                implementation("com.squareup.sqldelight:coroutines-extensions:$sql_delight_version")
+                implementation("io.insert-koin:koin-core:$koin_version")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-okhttp:2.0.0-beta-1")
-                implementation("com.squareup.sqldelight:android-driver:1.5.3")
+                implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+                implementation("com.squareup.sqldelight:android-driver:$sql_delight_version")
+            }
+        }
+        val androidTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.13.2")
             }
         }
         val iosX64Main by getting
         val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
+        //val iosSimulatorArm64Main by getting
         val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            //iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-ios:2.0.0-beta-1")
+                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+                implementation("com.squareup.sqldelight:native-driver:$sql_delight_version")
             }
         }
-        val nativeMain by creating {
-            dependencies {
-                implementation("com.squareup.sqldelight:native-driver:1.5.3")
-            }
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        //val iosSimulatorArm64Test by getting
+        val iosTest by creating {
+            dependsOn(commonTest)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
+            //iosSimulatorArm64Test.dependsOn(this)
         }
-
-        /* Main hierarchy */
-        androidMain.dependsOn(commonMain)
-        iosMain.dependsOn(nativeMain)
-        iosX64Main.dependsOn(iosMain)
-        iosArm64Main.dependsOn(iosMain)
-        iosSimulatorArm64Main.dependsOn(iosMain)
-        nativeMain.dependsOn(commonMain)
     }
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
+    }
+}
+
+sqldelight {
+    database("AppDatabase") {
+        packageName = "com.example.db"
     }
 }
