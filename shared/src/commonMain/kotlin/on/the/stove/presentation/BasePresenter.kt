@@ -1,43 +1,56 @@
 package on.the.stove.presentation
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dispatchers.uiDispatcher
-import kotlin.coroutines.CoroutineContext
 
-abstract class BasePresenter<T>(
-    private val coroutineContext: CoroutineContext
-) {
+@OptIn(ObsoleteCoroutinesApi::class)
+abstract class BasePresenter<State, Action> {
 
-    protected var view: T? = null
-    protected lateinit var scope: PresenterCoroutineScope
-    protected var uiScope = CoroutineScope(uiDispatcher)
+    private var updateCallback: ((state: State) -> Unit)? = null
+    private val stateChannel = BroadcastChannel<State>(1)
+    private val actionsChannel = BroadcastChannel<Action>(1)
 
-    fun attachView(view: T) {
-        scope = PresenterCoroutineScope(coroutineContext)
-        this.view = view
-        onViewAttached(view)
+    private val stateFlow: Flow<State> = stateChannel.openSubscription().receiveAsFlow()
+    protected val actionsFlow : Flow<Action> = actionsChannel.openSubscription().receiveAsFlow()
+
+    private val uiScope = CoroutineScope(uiDispatcher)
+    protected val ioScope = CoroutineScope(ioDispatcher)
+
+    init {
+        uiScope.launch {
+            stateFlow
+                .flowOn(uiScope.coroutineContext)
+                .distinctUntilChanged()
+                .collect { state -> updateCallback?.invoke(state) }
+        }
     }
 
-    protected open fun onViewAttached(view: T) {}
+    protected suspend fun updateState(reduceState: (state: State) -> State): State {
+        // TODO: Perhaps the condition of the race
+        val reducedState = stateFlow.firstOrNull()?.let(reduceState)
+            ?: error("Explore the state when there is no time when updating")
+
+        stateChannel.send(reducedState)
+
+        return reducedState
+    }
+
+    fun attachView(updateCallback: (state: State) -> Unit) {
+        this.updateCallback = updateCallback
+    }
 
     fun detachView() {
-        view = null
-        scope.viewDetached()
-        onViewDetached()
+        this.updateCallback = null
     }
 
-    protected open fun onViewDetached() {}
-}
-
-class PresenterCoroutineScope(
-    context: CoroutineContext
-) : CoroutineScope {
-
-    private var onViewDetachJob = Job()
-    override val coroutineContext: CoroutineContext = context + onViewDetachJob
-
-    fun viewDetached() {
-        onViewDetachJob.cancel()
+    fun reduce(action: Action) {
+        ioScope.launch {
+            actionsChannel.send(action)
+        }
     }
 }

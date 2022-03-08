@@ -1,10 +1,10 @@
-package on.the.stove.models
+package on.the.stove.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecipeModel(
+data class Recipe(
     val id: String,
     @SerialName("photo") val imageUrl: String,
     @SerialName("name") val title: String,

@@ -10,7 +10,7 @@ import kotlin.native.concurrent.*
 
 
 actual val ioDispatcher: CoroutineContext
-    get() = MainDispatcher
+    get() = IODispatcher
 
 actual val uiDispatcher: CoroutineContext
     get() = MainDispatcher
