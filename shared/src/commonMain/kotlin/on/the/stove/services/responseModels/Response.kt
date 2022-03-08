@@ -1,10 +1,12 @@
 package on.the.stove.services.responseModels
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class DefaultResponse<out T: Any>(
+internal class Response<out T : Any>(
     val code: Int,
-    @SerialName("message") val body: List<T>
+    @SerialName("message") val payload: T,
 )
+

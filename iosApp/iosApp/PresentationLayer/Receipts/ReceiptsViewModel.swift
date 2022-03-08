@@ -10,10 +10,12 @@ class ReceiptsViewModel: ObservableObject {
         isLoading: true,
         error: nil
     )
-    private let presenter = RecipesPresenter()
+    private let presenter = RecipesListStore()
 
     init() {
         presenter.attachView(updateCallback: didChangeState(_:))
+
+        presenter.reduce(action: RecipesListAction.Init())
     }
 
     func didScrollToLastItem() {

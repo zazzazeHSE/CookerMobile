@@ -9,5 +9,6 @@ data class Recipe(
     @SerialName("photo") val imageUrl: String,
     @SerialName("name") val title: String,
     @SerialName("comment") val description: String,
-    val author: String
+    val author: String,
+    val isLiked: Boolean = false,
 )
