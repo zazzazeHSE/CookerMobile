@@ -7,7 +7,8 @@ struct iOSApp: App {
             ReceiptsView(
                 router: ReceiptsRouter(
                     isPresented: .constant(false)
-                )
+                ),
+                viewModel: .init()
             )
 		}
 	}

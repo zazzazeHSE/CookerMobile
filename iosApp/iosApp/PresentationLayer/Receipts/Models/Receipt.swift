@@ -1,10 +1,14 @@
 import Foundation
 
 struct Receipt {
-    let id = UUID()
+    let id: String
     let title: String
     let imageURL: URL
-    let rating: Double
-    let ratesCount: Int
     let favourite: Bool
+}
+
+extension Receipt: Equatable {
+    static func == (lhs: Receipt, rhs: Receipt) -> Bool {
+        lhs.id == rhs.id
+    }
 }
