@@ -71,7 +71,7 @@ fun MainScreen() {
             startDestination = BottomNavigationScreens.Recipes.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(BottomNavigationScreens.Recipes.route) { RecipesListScreen(navController) }
+            composable(BottomNavigationScreens.Recipes.route) { RecipesListScreen() }
             composable(BottomNavigationScreens.Favorites.route) { TODO() }
             composable(BottomNavigationScreens.Cart.route) { TODO() }
             composable(BottomNavigationScreens.Articles.route) { TODO() }
