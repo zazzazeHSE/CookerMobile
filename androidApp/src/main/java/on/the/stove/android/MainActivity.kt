@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -19,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import on.the.stove.android.navigation.BottomNavigationScreens
 import on.the.stove.android.screens.RecipesListScreen
 import on.the.stove.android.theme.OnTheStoveTheme
+import on.the.stove.presentation.recipesList.RecipesListStore
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,16 +45,30 @@ val bottomNavigationItems = listOf(
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val recipesStore = remember { RecipesListStore() }
     Scaffold(
         bottomBar = {
-            BottomNavigation {
+            BottomNavigation(
+                backgroundColor = Color.White
+            ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
                 bottomNavigationItems.forEach { screen ->
+                    val selected =
+                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                    val selectedColor = if (selected) MaterialTheme.colors.primary else Color.Gray
+
                     BottomNavigationItem(
-                        icon = { Icon(screen.icon, contentDescription = null) },
+                        icon = {
+                            Icon(
+                                screen.icon,
+                                contentDescription = null,
+                                tint = selectedColor,
+                            )
+                        },
                         label = { Text(stringResource(screen.resourceId)) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        selected = selected,
+                        selectedContentColor = selectedColor,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -71,10 +88,10 @@ fun MainScreen() {
             startDestination = BottomNavigationScreens.Recipes.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(BottomNavigationScreens.Recipes.route) { RecipesListScreen() }
-            composable(BottomNavigationScreens.Favorites.route) { TODO() }
-            composable(BottomNavigationScreens.Cart.route) { TODO() }
-            composable(BottomNavigationScreens.Articles.route) { TODO() }
+            composable(BottomNavigationScreens.Recipes.route) { RecipesListScreen(recipesStore) }
+            composable(BottomNavigationScreens.Favorites.route) { }
+            composable(BottomNavigationScreens.Cart.route) { }
+            composable(BottomNavigationScreens.Articles.route) { }
         }
     }
 }
