@@ -3,7 +3,9 @@ package on.the.stove.android.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -18,41 +20,84 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.skydoves.landscapist.coil.CoilImage
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import on.the.stove.android.theme.shimmerTheme
-import java.util.*
+import on.the.stove.core.Resource
+import on.the.stove.dto.Recipe
+import on.the.stove.presentation.recipesList.RecipesListAction
+import on.the.stove.presentation.recipesList.RecipesListState
+import on.the.stove.presentation.recipesList.RecipesListStore
+
+private const val PaginationOffset = 8
+private var isInit = false
 
 @Composable
-internal fun RecipesListScreen() {
-    Column(Modifier.padding(horizontal = 16.dp)) {
-        var recipes by remember { mutableStateOf(MockRecipes) }
+internal fun RecipesListScreen(recipesStore: RecipesListStore) {
+    LaunchedEffect(isInit) {
+        if (!isInit) recipesStore.reduce(RecipesListAction.Init)
 
-        LazyColumn(
-            modifier = Modifier.padding(top = 16.dp),
-            contentPadding = PaddingValues(bottom = 16.dp),
-        ) {
-            recipes.forEach { feedRecipe ->
-                item {
-                    FeedRecipe(feedRecipe = feedRecipe, onLike = {
-                        recipes = recipes.map { recipe ->
-                            if (recipe.id == feedRecipe.id) {
-                                recipe.copy(
-                                    isFavorite = !recipe.isFavorite
-                                )
-                            } else {
-                                recipe
-                            }
-                        }
-                    })
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+        // TODO: research this case
+        isInit = true
+    }
+
+    Column(Modifier.padding(horizontal = 16.dp)) {
+        val state: RecipesListState by recipesStore.observeState().collectAsState()
+
+        when (state.recipesResource) {
+            is Resource.Loading -> {
+
+            }
+            is Resource.Error -> {
+
+            }
+            is Resource.Data -> {
+                val recipes = requireNotNull(state.recipesResource.value)
+
+                FeedRecipeList(recipesStore = recipesStore, recipes = recipes)
             }
         }
     }
 }
 
 @Composable
-private fun FeedRecipe(feedRecipe: FeedRecipe, onLike: () -> Unit) {
-    Card(modifier = Modifier, elevation = 2.dp) {
+private fun FeedRecipeList(recipesStore: RecipesListStore, recipes: List<Recipe>) {
+    val listState = rememberLazyListState()
+
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.padding(top = 16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp),
+    ) {
+        recipes.forEach { recipe ->
+            item {
+                FeedRecipe(
+                    feedRecipe = recipe,
+                    onLike = { recipesStore.reduce(RecipesListAction.Like(recipe.id)) })
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex }
+            .map { index ->
+                (recipesStore.observeState().first().recipesResource.value?.size ?: 0) to index
+            }
+            .map { (size, index) -> size - PaginationOffset == index }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                recipesStore.reduce(RecipesListAction.LoadNextPage)
+            }
+    }
+}
+
+@Composable
+private fun FeedRecipe(feedRecipe: Recipe, onLike: () -> Unit) {
+    Card(modifier = Modifier, shape = RoundedCornerShape(16.dp), elevation = 2.dp) {
         Box(contentAlignment = Alignment.TopEnd) {
             Column {
                 CoilImage(
@@ -77,20 +122,21 @@ private fun FeedRecipe(feedRecipe: FeedRecipe, onLike: () -> Unit) {
             }
             Box(
                 modifier = Modifier
-                    .padding(4.dp)
-                    .size(32.dp)
+                    .padding(8.dp)
+                    .size(36.dp)
                     .clip(CircleShape)
                     .background(color = MaterialTheme.colors.primary)
             ) {
                 IconToggleButton(
-                    checked = feedRecipe.isFavorite,
+                    modifier = Modifier.padding(4.dp),
+                    checked = feedRecipe.isLiked,
                     onCheckedChange = {
                         onLike.invoke()
                     }
                 ) {
                     Icon(
                         tint = Color.White,
-                        imageVector = if (feedRecipe.isFavorite) {
+                        imageVector = if (feedRecipe.isLiked) {
                             Icons.Filled.Favorite
                         } else {
                             Icons.Default.FavoriteBorder
@@ -102,93 +148,3 @@ private fun FeedRecipe(feedRecipe: FeedRecipe, onLike: () -> Unit) {
         }
     }
 }
-
-data class FeedRecipe(
-    val id: String,
-    val title: String,
-    val imageUrl: String,
-    val isFavorite: Boolean = false,
-)
-
-private val MockRecipes = listOf(
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Сырная лепёшка с картошкой",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/36/2951035_28571.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-    FeedRecipe(
-        id = UUID.randomUUID().toString(),
-        title = "Бриошь \"Карнавальная\"",
-        imageUrl = "https://www.povarenok.ru/data/cache/2022feb/27/32/2951000_61620.jpg"
-    ),
-)
