@@ -8,36 +8,22 @@ protocol ReceiptsViewRouter: Router {
 struct ReceiptsView: View {
     let router: ReceiptsViewRouter
     @State private var selectedMenuState: MenuItems = .popular
-    let receipts: [Receipt] = {
-        var arr = [Receipt]()
-        for _ in 0...10 {
-            arr.append(
-                Receipt(
-                    title: "Пряный суп из батата",
-                    imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
-                    rating: 4.5,
-                    ratesCount: 60,
-                    favourite: .random()
-                )
-            )
-        }
+    @ObservedObject var viewModel: ReceiptsViewModel
 
-        return arr
-    }()
+    init(
+        router: ReceiptsViewRouter,
+        viewModel: ReceiptsViewModel
+    ) {
+        self.router = router
+        self.viewModel = viewModel
+    }
 
 	var body: some View {
         NavigationView {
-            ScrollView {
-            VStack(alignment: .leading) {
-                titleText
-                searchInput
-                filterView
+            VStack {
                 receiptsList
-                Spacer()
             }
-            .padding()
-            .navigationBarHidden(true)
-            }
+            .navigationBarTitle(Text("Какой рецепт Вы ищете?"))
         }
 	}
 
@@ -81,10 +67,34 @@ struct ReceiptsView: View {
     }
 
     private var receiptsList: some View {
-        ForEach(receipts, id: \.id) { receipt in
-            ReceiptListItemView(receipt: receipt)
-                .padding(.bottom, 20)
+        List {
+            ForEach(viewModel.model.listModel.receipts ?? [], id: \.id) { receipt in
+                ReceiptListItemView(receipt: receipt)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 20)
+                    .onAppear {
+                        if receipt == viewModel.model.listModel.receipts?.last {
+                            viewModel.didScrollToLastItem()
+                        }
+                    }
+                    .background(.clear)
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.white)
+            if viewModel.model.listModel.isFull == false {
+                HStack(alignment: .center) {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.white)
+            }
         }
+        .listStyle(PlainListStyle())
+        .background(.white)
     }
 
     private enum MenuItems: String, CaseIterable, CustomStringConvertible {
@@ -100,7 +110,12 @@ struct ReceiptsView: View {
 #if DEBUG
 struct ReceiptsView_Previews: PreviewProvider {
 	static var previews: some View {
-        ReceiptsView(router: ReceiptsRouter(isPresented: .constant(false)))
+        ReceiptsView(
+            router: ReceiptsRouter(
+                isPresented: .constant(false)
+            ),
+            viewModel: .init()
+        )
 	}
 }
 #endif

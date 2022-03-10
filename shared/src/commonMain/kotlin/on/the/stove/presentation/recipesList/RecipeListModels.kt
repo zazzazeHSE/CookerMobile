@@ -5,7 +5,7 @@ import on.the.stove.dto.Recipe
 
 data class RecipesListState(
     val recipesResource: Resource<List<Recipe>> = Resource.Loading,
-    val category: Int = 0,
+    val category: Int = 1,
     val page: Int = 0,
     val isPaginationRecipesLoading: Boolean = false,
     val isPaginationFull: Boolean = false,
@@ -17,5 +17,11 @@ sealed class RecipesListAction {
 
     object LoadNextPage : RecipesListAction()
 
-    data class ChangeCategory(val category: Int = 0) : RecipesListAction()
+    data class ChangeCategory(val category: Int = 1) : RecipesListAction()
+
+    data class Like(val id: String) : RecipesListAction()
+}
+
+sealed class RecipesListEffect {
+    //
 }

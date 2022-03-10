@@ -20,10 +20,8 @@ struct ReceiptListItemView: View {
                 )
                 .frame(minHeight: 165 ,maxHeight: 165)
                 .cornerRadius(18)
-                if receipt.favourite {
-                    favouriteView
-                        .padding(12)
-                }
+                favouriteView
+                    .padding(12)
             }
             Text(receipt.title)
                 .padding(.top, 14)
@@ -48,7 +46,7 @@ struct ReceiptListItemView: View {
                 .foregroundColor(.white)
                 .padding(9)
         }
-        .background(Colors.orange)
+        .background(receipt.favourite ? Colors.orange: .gray )
         .clipShape(Circle())
     }
 }
@@ -58,10 +56,9 @@ struct ReceiptListItemView_Previews: PreviewProvider {
     static var previews: some View {
         ReceiptListItemView(
             receipt: .init(
+                id: "1341",
                 title: "Пряный суп из батата",
                 imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
-                rating: 4.5,
-                ratesCount: 60,
                 favourite: true
             )
         )

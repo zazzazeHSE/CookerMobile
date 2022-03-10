@@ -20,7 +20,11 @@
 		842E389127CBABB8000BF352 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E389027CBABB8000BF352 /* View+Extensions.swift */; };
 		842E389327CBF794000BF352 /* ReceiptListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E389227CBF794000BF352 /* ReceiptListItemView.swift */; };
 		842E389527CBFB8E000BF352 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E389427CBFB8E000BF352 /* Images.swift */; };
-		842E389827CC015E000BF352 /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E389727CC015E000BF352 /* Receipt.swift */; };
+		843D698227D7657000DEA4AD /* ReceiptsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D698127D7657000DEA4AD /* ReceiptsViewModel.swift */; };
+		843D698627D769C900DEA4AD /* ChangeableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D698527D769C900DEA4AD /* ChangeableWrapper.swift */; };
+		843D698827D76A6400DEA4AD /* Changeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D698727D76A6400DEA4AD /* Changeable.swift */; };
+		843D698C27D76C9A00DEA4AD /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D698B27D76C9A00DEA4AD /* Receipt.swift */; };
+		843D698E27D76CB100DEA4AD /* ReceiptsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D698D27D76CB100DEA4AD /* ReceiptsListModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,7 +56,11 @@
 		842E389027CBABB8000BF352 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		842E389227CBF794000BF352 /* ReceiptListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptListItemView.swift; sourceTree = "<group>"; };
 		842E389427CBFB8E000BF352 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
-		842E389727CC015E000BF352 /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		843D698127D7657000DEA4AD /* ReceiptsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptsViewModel.swift; sourceTree = "<group>"; };
+		843D698527D769C900DEA4AD /* ChangeableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeableWrapper.swift; sourceTree = "<group>"; };
+		843D698727D76A6400DEA4AD /* Changeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changeable.swift; sourceTree = "<group>"; };
+		843D698B27D76C9A00DEA4AD /* Receipt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		843D698D27D76CB100DEA4AD /* ReceiptsListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptsListModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +133,7 @@
 		842E388627CB9705000BF352 /* PresentationLayer */ = {
 			isa = PBXGroup;
 			children = (
+				843D698327D7683100DEA4AD /* Utils */,
 				842E388D27CB9DE3000BF352 /* Common */,
 				842E388727CB9728000BF352 /* Receipts */,
 			);
@@ -134,10 +143,12 @@
 		842E388727CB9728000BF352 /* Receipts */ = {
 			isa = PBXGroup;
 			children = (
-				842E389627CC0154000BF352 /* Models */,
+				843D698A27D76C9A00DEA4AD /* Models */,
+				843D698927D76C5A00DEA4AD /* Subviews */,
 				7555FF82242A565900829871 /* ReceiptsView.swift */,
 				842E388827CB9748000BF352 /* ReceiptsRouter.swift */,
-				842E389227CBF794000BF352 /* ReceiptListItemView.swift */,
+				843D698127D7657000DEA4AD /* ReceiptsViewModel.swift */,
+				843D698D27D76CB100DEA4AD /* ReceiptsListModel.swift */,
 			);
 			path = Receipts;
 			sourceTree = "<group>";
@@ -160,10 +171,35 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		842E389627CC0154000BF352 /* Models */ = {
+		843D698327D7683100DEA4AD /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				842E389727CC015E000BF352 /* Receipt.swift */,
+				843D698427D769B300DEA4AD /* Changeable */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		843D698427D769B300DEA4AD /* Changeable */ = {
+			isa = PBXGroup;
+			children = (
+				843D698527D769C900DEA4AD /* ChangeableWrapper.swift */,
+				843D698727D76A6400DEA4AD /* Changeable.swift */,
+			);
+			path = Changeable;
+			sourceTree = "<group>";
+		};
+		843D698927D76C5A00DEA4AD /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				842E389227CBF794000BF352 /* ReceiptListItemView.swift */,
+			);
+			path = Subviews;
+			sourceTree = "<group>";
+		};
+		843D698A27D76C9A00DEA4AD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				843D698B27D76C9A00DEA4AD /* Receipt.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -260,8 +296,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				842E389827CC015E000BF352 /* Receipt.swift in Sources */,
+				843D698C27D76C9A00DEA4AD /* Receipt.swift in Sources */,
 				842E388527CB95B6000BF352 /* SheetModifier.swift in Sources */,
+				843D698227D7657000DEA4AD /* ReceiptsViewModel.swift in Sources */,
+				843D698627D769C900DEA4AD /* ChangeableWrapper.swift in Sources */,
 				842E389127CBABB8000BF352 /* View+Extensions.swift in Sources */,
 				842E388C27CB9CBD000BF352 /* Colors.swift in Sources */,
 				842E389527CBFB8E000BF352 /* Images.swift in Sources */,
@@ -272,6 +310,8 @@
 				842E388927CB9748000BF352 /* ReceiptsRouter.swift in Sources */,
 				842E388327CB95A1000BF352 /* NavigationModifier.swift in Sources */,
 				7555FF83242A565900829871 /* ReceiptsView.swift in Sources */,
+				843D698E27D76CB100DEA4AD /* ReceiptsListModel.swift in Sources */,
+				843D698827D76A6400DEA4AD /* Changeable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
