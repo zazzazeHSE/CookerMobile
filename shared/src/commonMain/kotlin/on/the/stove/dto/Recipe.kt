@@ -3,6 +3,7 @@ package on.the.stove.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// TODO: Must be renamed to RecipeShort or RecipeFeed
 @Serializable
 data class Recipe(
     val id: String,

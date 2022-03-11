@@ -1,6 +1,5 @@
 package on.the.stove.dispatchers
 
-import kotlinx.coroutines.CoroutineScope
 import kotlin.coroutines.CoroutineContext
 
 expect val ioDispatcher: CoroutineContext
