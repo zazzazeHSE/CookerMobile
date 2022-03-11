@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import on.the.stove.android.navigation.BottomNavigationScreens
+import on.the.stove.android.screens.FavouritesScreen
 import on.the.stove.android.screens.RecipesListScreen
 import on.the.stove.android.theme.OnTheStoveTheme
 import on.the.stove.presentation.recipesList.RecipesListStore
@@ -89,7 +90,7 @@ fun MainScreen() {
             Modifier.padding(innerPadding)
         ) {
             composable(BottomNavigationScreens.Recipes.route) { RecipesListScreen(recipesStore) }
-            composable(BottomNavigationScreens.Favorites.route) { }
+            composable(BottomNavigationScreens.Favorites.route) { FavouritesScreen() }
             composable(BottomNavigationScreens.Cart.route) { }
             composable(BottomNavigationScreens.Articles.route) { }
         }
