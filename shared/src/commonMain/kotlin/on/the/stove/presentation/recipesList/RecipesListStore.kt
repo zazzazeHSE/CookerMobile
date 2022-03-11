@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import on.the.stove.core.Resource
 import on.the.stove.core.toResource
+import on.the.stove.database.AppDatabaseManager
+import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipeApiImpl
 import on.the.stove.services.network.RecipesApi
@@ -15,6 +17,8 @@ class RecipesListStore :
 
     // TODO: Use DI in future
     private val recipesApi: RecipesApi = RecipeApiImpl()
+    private val appDatabaseManager = AppDatabaseManager()
+
     override val stateFlow: MutableStateFlow<RecipesListState> =
         MutableStateFlow(RecipesListState())
     override val sideEffectsFlow: MutableSharedFlow<RecipesListEffect> = MutableSharedFlow()
@@ -55,15 +59,14 @@ class RecipesListStore :
                     state.copy(
                         recipesResource = state.recipesResource.value.orEmpty().map { recipe ->
                             if (recipe.id == action.id) {
-                                recipe.copy(
-                                    isLiked = !recipe.isLiked
-                                )
+                                recipe.copy(isLiked = !recipe.isLiked)
                             } else {
                                 recipe
                             }
                         }.toResource()
                     )
                 }
+                updateRecipeCacheById(id = action.id)
             }
         }
     }
@@ -74,10 +77,12 @@ class RecipesListStore :
             category = state.category,
         ).fold(
             onSuccess = { recipes ->
-                updateState { state ->
-                    state.copy(
-                        recipesResource = Resource.Data(recipes)
-                    )
+                recipes.mergeCachedAndInvoke { mergedRecipes ->
+                    updateState { state ->
+                        state.copy(
+                            recipesResource = Resource.Data(mergedRecipes)
+                        )
+                    }
                 }
             },
             onFailure = { error ->
@@ -96,13 +101,15 @@ class RecipesListStore :
             category = state.category,
         ).fold(
             onSuccess = { recipes ->
-                updateState { state ->
-                    state.copy(
-                        recipesResource = Resource.Data(
-                            (state.recipesResource.value ?: emptyList()) + recipes
-                        ),
-                        isPaginationRecipesLoading = false,
-                    )
+                recipes.mergeCachedAndInvoke { mergedRecipes ->
+                    updateState { state ->
+                        state.copy(
+                            recipesResource = Resource.Data(
+                                (state.recipesResource.value ?: emptyList()) + mergedRecipes
+                            ),
+                            isPaginationRecipesLoading = false,
+                        )
+                    }
                 }
             },
             onFailure = {
@@ -113,5 +120,33 @@ class RecipesListStore :
                 }
             }
         )
+    }
+
+    private fun updateRecipeCacheById(id: String) {
+        val recipe = stateFlow.value.recipesResource.value!!.first { recipe ->
+            recipe.id == id
+        }
+
+        if (recipe.isLiked) {
+            appDatabaseManager.addOrUpdateFavouriteRecipe(recipe)
+        } else {
+            appDatabaseManager.removeFavouriteRecipe(recipe.id)
+        }
+    }
+
+    private suspend inline fun List<Recipe>.mergeCachedAndInvoke(crossinline andThen: suspend (mergedRecipes: List<Recipe>) -> Unit) {
+        appDatabaseManager.getAllFavouritesRecipes().collect { dbRecipes ->
+            val mergedRecipes = map { recipe ->
+                if (dbRecipes.find { it.id == recipe.id } != null) {
+                    appDatabaseManager.addOrUpdateFavouriteRecipe(recipe)
+
+                    recipe.copy(isLiked = true)
+                } else {
+                    recipe
+                }
+            }
+
+            andThen.invoke(mergedRecipes)
+        }
     }
 }

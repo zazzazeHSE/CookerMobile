@@ -1,6 +1,5 @@
 package on.the.stove.dispatchers
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
