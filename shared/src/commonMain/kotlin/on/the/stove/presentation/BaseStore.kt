@@ -1,5 +1,6 @@
 package on.the.stove.presentation
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -20,15 +21,19 @@ abstract class BaseStore<State, Action, Effect> {
     protected abstract val stateFlow: MutableStateFlow<State>
     protected abstract val sideEffectsFlow: MutableSharedFlow<Effect>
 
-    private val scope: CoroutineScope = CoroutineScope(uiDispatcher + SupervisorJob())
+    protected val scope: CoroutineScope = CoroutineScope(uiDispatcher + SupervisorJob())
 
-    protected suspend fun updateState(reduceState: (state: State) -> State) =
+    protected suspend fun updateState(reduceState: (state: State) -> State) {
+        Logger.d("[STORE]: ${this::class.simpleName} update state")
         stateFlow.emit(reduceState(stateFlow.value))
+    }
 
     protected abstract suspend fun reduce(action: Action, initialState: State)
 
     // TODO: rename to dispatch or accept
     fun reduce(action: Action) {
+        // TODO: need disable on prod build because used reflection
+        Logger.d("[STORE]: ${this::class.simpleName} reduce action ${action!!::class.qualifiedName}")
         scope.launch(ioDispatcher) {
             reduce(action, stateFlow.value)
         }
