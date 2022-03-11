@@ -1,16 +1,41 @@
-//
-//  TabBarView.swift
-//  iosApp
-//
-//  Created by Egor Anikeev on 11.03.2022.
-//  Copyright © 2022 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 struct TabBarView: View {
+    @State var showTimerView: Bool = false
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        let timerBiding = Binding<Bool>.init(
+            get: { showTimerView },
+            set: { newValue in withAnimation { showTimerView = newValue } }
+        )
+        return ZStack(alignment: .bottomTrailing) {
+            TabView {
+                ReceiptsView(
+                    router: ReceiptsRouter(
+                        isPresented: .constant(false)
+                    ),
+                    viewModel: .init()
+                )
+                    .tabItem {
+                        Image(systemName: "list.bullet.rectangle.fill")
+                        Text("Рецепты")
+                    }
+                    .tag(0)
+            }
+            .accentColor(Colors.orange)
+            .onAppear {
+                UITabBar.appearance().barTintColor = .white
+            }
+            TimerView(
+                showTimeSelectionView: timerBiding
+            )
+                .padding()
+                .padding(.bottom, 40)
+            if showTimerView {
+                TimeSelectionView {
+                    withAnimation { showTimerView = false }
+                }
+            }
+        }
     }
 }
 

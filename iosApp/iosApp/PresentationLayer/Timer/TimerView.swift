@@ -1,21 +1,25 @@
-//
-//  TimerView.swift
-//  iosApp
-//
-//  Created by Egor Anikeev on 11.03.2022.
-//  Copyright © 2022 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 struct TimerView: View {
+    @Binding var showTimeSelectionView: Bool
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Image(systemName: "timer")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundColor(Color.white)
+                .padding(10)
+        }
+        .background(Colors.orange)
+        .cornerRadius(17)
+        .onTapGesture {
+            showTimeSelectionView = true
+        }
     }
 }
 
 struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
-        TimerView()
+        TimerView(showTimeSelectionView: .constant(false))
     }
 }
