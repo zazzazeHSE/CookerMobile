@@ -34,6 +34,7 @@
 		8467FDEA27DCC2900088A20B /* ReceiptsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDE427DCC2900088A20B /* ReceiptsListModel.swift */; };
 		8467FDED27DCC4560088A20B /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDEC27DCC4560088A20B /* TimerViewModel.swift */; };
 		8467FDEF27DCC8620088A20B /* TimeSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDEE27DCC8620088A20B /* TimeSelectionViewModel.swift */; };
+		8467FDF127DCF6DA0088A20B /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF027DCF6DA0088A20B /* Observer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,6 +80,7 @@
 		8467FDE427DCC2900088A20B /* ReceiptsListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiptsListModel.swift; sourceTree = "<group>"; };
 		8467FDEC27DCC4560088A20B /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
 		8467FDEE27DCC8620088A20B /* TimeSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSelectionViewModel.swift; sourceTree = "<group>"; };
+		8467FDF027DCF6DA0088A20B /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 		842E388627CB9705000BF352 /* PresentationLayer */ = {
 			isa = PBXGroup;
 			children = (
+				8467FDCE27DC976D0088A20B /* Base */,
 				8467FDBE27DBCFE40088A20B /* Timer */,
 				843D698327D7683100DEA4AD /* Utils */,
 				8451D4DE27CEB6F7005FC01E /* Receipt */,
@@ -183,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				843D698427D769B300DEA4AD /* Changeable */,
+				8467FDF027DCF6DA0088A20B /* Observer.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -217,7 +221,6 @@
 			isa = PBXGroup;
 			children = (
 				8467FDDD27DCC2900088A20B /* ReceiptsList */,
-				8467FDCE27DC976D0088A20B /* Base */,
 				8451D4DF27CEB708005FC01E /* CommonViews */,
 				8451D4D627CE9C75005FC01E /* SimpleReceipt */,
 			);
@@ -394,6 +397,7 @@
 				8451D4DD27CEAEDC005FC01E /* SegmentedPicker.swift in Sources */,
 				842E388F27CB9E05000BF352 /* SearchView.swift in Sources */,
 				8467FDDA27DCAAF80088A20B /* FlowController.swift in Sources */,
+				8467FDF127DCF6DA0088A20B /* Observer.swift in Sources */,
 				8467FDED27DCC4560088A20B /* TimerViewModel.swift in Sources */,
 				8467FDCD27DC93F00088A20B /* SimpleRecipeViewModel.swift in Sources */,
 				8467FDD027DC977D0088A20B /* Model.swift in Sources */,

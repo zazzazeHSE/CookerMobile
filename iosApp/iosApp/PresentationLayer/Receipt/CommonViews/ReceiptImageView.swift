@@ -10,6 +10,7 @@ struct ReceiptImageView: View {
         static let grey = Color(red: 224, green: 224, blue: 224)
     }
     let model: ReceiptImageModel
+    let onLikeButtonTap: () -> Void
     var body: some View {
         ZStack(alignment: .topTrailing) {
             AsyncImage(
@@ -39,6 +40,9 @@ struct ReceiptImageView: View {
         }
         .background((model.isLiked ? Colors.orange : ViewColors.grey))
         .clipShape(Circle())
+        .onTapGesture {
+            onLikeButtonTap()
+        }
     }
 }
 
@@ -49,7 +53,8 @@ struct ReceiptImageView_Previews: PreviewProvider {
             model: .init(
                 imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
                 isLiked: true
-            )
+            ),
+            onLikeButtonTap: {}
         )
             .previewLayout(.sizeThatFits)
             .previewDisplayName("Liked")
@@ -58,7 +63,8 @@ struct ReceiptImageView_Previews: PreviewProvider {
             model: .init(
                 imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
                 isLiked: true
-            )
+            ),
+            onLikeButtonTap: {}
         )
             .previewLayout(.sizeThatFits)
             .previewDisplayName("Not liked")

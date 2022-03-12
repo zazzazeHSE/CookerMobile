@@ -1,27 +1,20 @@
 import Foundation
 
-struct ReceiptsModel {
-    var listModel: ReceiptsList
-    var isLoading: Bool
-    var error: String?
-}
-
-struct ReceiptsList {
+struct ReceiptsListModel {
     var receipts: [Receipt]?
     var isFull: Bool
 }
 
-extension ReceiptsModel: Changeable {
-    init(copy: ChangeableWrapper<ReceiptsModel>) {
-        self.listModel = copy.listModel
-        self.isLoading = copy.isLoading
-        self.error = copy.error
-    }
+struct CategoryModel {
+    let id: String
+    let title: String
+    let current: Bool
 }
 
-extension ReceiptsList: Changeable {
-    init(copy: ChangeableWrapper<ReceiptsList>) {
-        self.receipts = copy.receipts
-        self.isFull = copy.isFull
+extension CategoryModel: Changeable {
+    init(copy: ChangeableWrapper<CategoryModel>) {
+        self.id = copy.id
+        self.title = copy.title
+        self.current = copy.current
     }
 }

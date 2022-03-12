@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import on.the.stove.core.Resource
 import on.the.stove.database.AppDatabaseRepository
+import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipesApi
 import org.koin.core.component.inject
@@ -38,12 +39,16 @@ class RecipeDetailsStore :
     }
 
     private suspend fun loadRecipeDetails(id: String) {
-        // TODO: check db isLiked or not
         recipesApi.getDetailedRecipe(id).fold(
             onSuccess = { result ->
-                updateState { state ->
-                    state.copy(recipeResource = Resource.Data(result))
-                }
+                appDatabaseRepository.observeAllFavouritesRecipes()
+                    .collect { favouriteRecipes ->
+                        val favouriteIds = favouriteRecipes.map(Recipe::id)
+                        val isLiked = favouriteIds.contains(result.id)
+                        updateState { state ->
+                            state.copy(recipeResource = Resource.Data(result.copy(isLiked = isLiked)))
+                        }
+                    }
             },
             onFailure = { error ->
                 updateState { state ->

@@ -40,17 +40,6 @@ abstract class BaseStore<State, Action, Effect> : KoinComponent {
         }
     }
 
-    @Deprecated("Only for support iOS", ReplaceWith("observeState"))
-    fun attachView(updateCallback: (state: State) -> Unit) {
-        this.updateCallback = updateCallback
-
-        scope.launch {
-            stateFlow.collect { state ->
-                updateCallback(state)
-            }
-        }
-    }
-
     fun observeState(): StateFlow<State> = stateFlow
 
     fun observeSideEffects(): Flow<Effect> = sideEffectsFlow

@@ -70,7 +70,8 @@ class RecipesListStore :
             is RecipesListAction.ChangeCategory -> {
                 updateState { state ->
                     state.copy(
-                        category = action.category
+                        category = action.category,
+                        recipesResource = Resource.Loading
                     )
                 }
 

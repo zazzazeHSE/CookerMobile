@@ -3,13 +3,15 @@ import SwiftUI
 
 struct ReceiptListItemView: View {
     let receipt: Receipt
+    let onLikeButtonTap: () -> Void
     var body: some View {
         VStack(alignment: .leading) {
             ReceiptImageView(
                 model: .init(
                     imageURL: receipt.imageURL,
                     isLiked: receipt.favourite
-                )
+                ),
+                onLikeButtonTap: onLikeButtonTap
             )
                 .frame(minHeight: 165, maxHeight: 165)
                 .cornerRadius(18)
@@ -50,7 +52,8 @@ struct ReceiptListItemView_Previews: PreviewProvider {
                 title: "Пряный суп из батата",
                 imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
                 favourite: true
-            )
+            ),
+            onLikeButtonTap: {}
         )
             .previewLayout(.sizeThatFits)
     }

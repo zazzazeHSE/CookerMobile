@@ -2,79 +2,95 @@ import SwiftUI
 import shared
 
 struct ReceiptsListView: View {
-    @State private var selectedMenuState: MenuItems = .popular
     @ObservedObject var viewModel: ReceiptsViewModel
 
-    init(viewModel: ReceiptsViewModel) {
-        self.viewModel = viewModel
-    }
+    var body: some View {
+        VStack(alignment: .center) {
+            CategoriesList(
+                model: $viewModel.categoriesModel,
+                onCategoryTap: viewModel.didTapOnCategory(_:)
+            )
 
-	var body: some View {
-        VStack {
-            receiptsList
+            ListView(
+                model: $viewModel.receiptsModel,
+                onRecipeTap: viewModel.didTapToRecipe(_:),
+                onScrollToLast: viewModel.didScrollToLastItem,
+                onRecipeLikeButtonTap: viewModel.didTapOnLikeForReceipt(_:)
+            )
+            Spacer()
         }
         .navigationBarTitle(Text("Какой рецепт Вы ищете?"))
-	}
+    }
+}
 
-    private var titleText: some View {
-        Text("Какой рецепт Вы ищете?")
-            .font(.system(size: 30))
-            .bold()
-            .foregroundColor(Colors.darkBlue)
+private struct CategoriesList: View {
+    @Binding var model: Model<[CategoryModel]>
+    let onCategoryTap: (CategoryModel) -> Void
+
+    var body: some View {
+        switch model {
+            case .data(let data): categoriesList(data)
+            default: EmptyView()
+        }
     }
 
-    private var searchInput: some View {
-        SearchView(
-            title: "Введите название рецепта...",
-            text: .constant("")
-        )
-            .background(Color(red: 252, green: 252, blue: 253))
-            .cornerRadius(15)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(
-                        Color(red: 239, green: 239, blue: 239),
-                        lineWidth: 1
-                    )
-            )
-            .font(.system(size: 14))
-    }
-
-    private var filterView: some View {
-        HStack {
-            Text("Сортировать по:")
-            Menu(selectedMenuState.rawValue) {
-                ForEach(MenuItems.allCases, id: \.self) { item in
-                    Button(item.rawValue) {
-                        selectedMenuState = item
-                    }
+    @ViewBuilder private func categoriesList(_ categories: [CategoryModel]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(categories, id: \.id) { category in
+                    Text(category.title)
+                        .foregroundColor(category.current ? Colors.orange : Colors.darkBlue)
+                        .onTapGesture {
+                            onCategoryTap(category)
+                        }
                 }
             }
-            .foregroundColor(Colors.orange)
+            .padding(.horizontal, 15)
+            .padding(.vertical, 5)
         }
-        .font(.system(size: 14))
+    }
+}
+
+private struct ListView: View {
+    @Binding var model: Model<ReceiptsListModel>
+    let onRecipeTap: (Receipt) -> Void
+    let onScrollToLast: () -> Void
+    let onRecipeLikeButtonTap: (Receipt) -> Void
+
+    var body: some View {
+        switch model {
+        case .data(let data): receiptsList(model: data)
+        case .error(let error): HStack(alignment: .center) {
+            Text(error)
+                .foregroundColor(.red)
+        }
+        case .loading: ProgressView()
+        }
     }
 
-    private var receiptsList: some View {
+    @ViewBuilder private func receiptsList(model: ReceiptsListModel) -> some View {
         List {
-            ForEach(viewModel.model.listModel.receipts ?? [], id: \.id) { receipt in
-                ReceiptListItemView(receipt: receipt)
+            ForEach(model.receipts ?? [], id: \.id) { receipt in
+                ReceiptListItemView(
+                    receipt: receipt,
+                    onLikeButtonTap: { onRecipeLikeButtonTap(receipt) }
+                )
                     .padding(.horizontal, 10)
                     .padding(.vertical, 20)
                     .onAppear {
-                        if receipt == viewModel.model.listModel.receipts?.last {
-                            viewModel.didScrollToLastItem()
+                        if receipt == model.receipts?.last {
+                            onScrollToLast()
                         }
                     }
                     .background(.clear)
                     .onTapGesture {
-                        viewModel.didTapToRecipe(receipt)
+                        onRecipeTap(receipt)
                     }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
             .listRowBackground(Color.white)
-            if viewModel.model.listModel.isFull == false {
+            if model.isFull == false {
                 HStack(alignment: .center) {
                     Spacer()
                     ProgressView()
@@ -87,15 +103,6 @@ struct ReceiptsListView: View {
         }
         .listStyle(PlainListStyle())
         .background(.white)
-    }
-
-    private enum MenuItems: String, CaseIterable, CustomStringConvertible {
-        var description: String {
-            self.rawValue
-        }
-
-        case popular = "Популярность"
-        case rating = "Рейтинг"
     }
 }
 
