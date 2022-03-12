@@ -4,13 +4,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import on.the.stove.core.toResource
-import on.the.stove.database.AppDatabaseManager
+import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.presentation.BaseStore
+import org.koin.core.component.inject
 
 class FavouritesStore : BaseStore<FavouritesState, FavouritesAction, FavouritesEffect>() {
 
-    private val appDatabaseManager = AppDatabaseManager()
+    private val appDatabaseRepository: AppDatabaseRepository by inject()
 
     override val stateFlow: MutableStateFlow<FavouritesState> =
         MutableStateFlow(FavouritesState())
@@ -20,7 +21,7 @@ class FavouritesStore : BaseStore<FavouritesState, FavouritesAction, FavouritesE
         when (action) {
             is FavouritesAction.Init -> {
                 scope.launch(ioDispatcher) {
-                    appDatabaseManager.observeAllFavouritesRecipes()
+                    appDatabaseRepository.observeAllFavouritesRecipes()
                         .collect { dbRecipes ->
                             updateState { state ->
                                 state.copy(
@@ -31,7 +32,7 @@ class FavouritesStore : BaseStore<FavouritesState, FavouritesAction, FavouritesE
                 }
             }
             is FavouritesAction.Like -> {
-                appDatabaseManager.removeFavouriteRecipe(action.id)
+                appDatabaseRepository.removeFavouriteRecipe(action.id)
             }
         }
     }
