@@ -3,8 +3,12 @@ package on.the.stove.presentation.recipeDetails
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import on.the.stove.core.Resource
+import on.the.stove.core.toResource
 import on.the.stove.database.AppDatabaseRepository
+import on.the.stove.dispatchers.ioDispatcher
+import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipesApi
 import org.koin.core.component.inject
@@ -24,6 +28,7 @@ class RecipeDetailsStore :
         when (action) {
             is RecipeDetailsAction.Init -> {
                 loadRecipeDetails(action.id)
+                observeFavouritesRecipes()
             }
             is RecipeDetailsAction.Like -> {
                 val recipeDetails = requireNotNull(stateFlow.value.recipeResource.value)
@@ -51,5 +56,20 @@ class RecipeDetailsStore :
                 }
             }
         )
+    }
+
+    private fun observeFavouritesRecipes() = scope.launch(ioDispatcher) {
+        appDatabaseRepository.observeAllFavouritesRecipes()
+            .collect { favouriteRecipes ->
+                val favouriteIds = favouriteRecipes.map(Recipe::id)
+
+                updateState { state ->
+                    state.copy(
+                        recipeResource = state.recipeResource.value?.copy(
+                            isLiked = favouriteIds.contains(state.recipeResource.value!!.id)
+                        )?.toResource() ?: state.recipeResource
+                    )
+                }
+            }
     }
 }
