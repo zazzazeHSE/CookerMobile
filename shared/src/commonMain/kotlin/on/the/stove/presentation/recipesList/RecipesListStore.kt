@@ -10,6 +10,7 @@ import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
+import on.the.stove.services.network.CategoriesApi
 import on.the.stove.services.network.RecipesApi
 import org.koin.core.component.inject
 
@@ -18,6 +19,7 @@ class RecipesListStore :
     BaseStore<RecipesListState, RecipesListAction, RecipesListEffect>() {
 
     private val recipesApi: RecipesApi by inject()
+    private val categoriesApi: CategoriesApi by inject()
     private val appDatabaseRepository: AppDatabaseRepository by inject()
 
     override val stateFlow: MutableStateFlow<RecipesListState> =
@@ -27,21 +29,29 @@ class RecipesListStore :
     override suspend fun reduce(action: RecipesListAction, initialState: RecipesListState) {
         when (action) {
             is RecipesListAction.Init -> {
-                scope.launch(ioDispatcher) {
-                    appDatabaseRepository.observeAllFavouritesRecipes()
-                        .collect { favouriteRecipes ->
-                            val favouriteIds = favouriteRecipes.map(Recipe::id)
+                observeFavouritesRecipes()
+                loadCategories()
 
+                when (val categoriesRes = stateFlow.value.categoriesResource) {
+                    is Resource.Data -> {
+                        val categories = categoriesRes.value
+
+                        if (categories.isEmpty()) {
                             updateState { state ->
                                 state.copy(
-                                    recipesResource = state.recipesResource.value?.map { recipe ->
-                                        recipe.copy(
-                                            isLiked = favouriteIds.contains(recipe.id)
-                                        )
-                                    }?.toResource() ?: state.recipesResource
+                                    categoriesResource = IllegalArgumentException("Empty categories").toResource()
                                 )
+                            }
+                        } else {
+                            updateState { state ->
+                                state.copy(
+                                    category = categories.first()
+                                )
+                            }
                         }
+
                     }
+                    else -> return
                 }
 
                 updateState { state ->
@@ -86,16 +96,52 @@ class RecipesListStore :
         }
     }
 
+    private fun observeFavouritesRecipes() = scope.launch(ioDispatcher) {
+        appDatabaseRepository.observeAllFavouritesRecipes()
+            .collect { favouriteRecipes ->
+                val favouriteIds = favouriteRecipes.map(Recipe::id)
+
+                updateState { state ->
+                    state.copy(
+                        recipesResource = state.recipesResource.value?.map { recipe ->
+                            recipe.copy(
+                                isLiked = favouriteIds.contains(recipe.id)
+                            )
+                        }?.toResource() ?: state.recipesResource
+                    )
+                }
+            }
+    }
+
+    private suspend fun loadCategories() {
+        categoriesApi.getCategories().fold(
+            onSuccess = { categories ->
+                updateState { state ->
+                    state.copy(
+                        categoriesResource = categories.toResource()
+                    )
+                }
+            },
+            onFailure = { error ->
+                updateState { state ->
+                    state.copy(
+                        categoriesResource = error.toResource()
+                    )
+                }
+            }
+        )
+    }
+
     private suspend fun loadRecipes(state: RecipesListState) {
         recipesApi.getRecipesList(
             page = state.page,
-            category = state.category,
+            category = requireNotNull(state.category),
         ).fold(
             onSuccess = { recipes ->
                 recipes.mergeCachedAndInvoke { mergedRecipes ->
                     updateState { state ->
                         state.copy(
-                            recipesResource = Resource.Data(mergedRecipes)
+                            recipesResource = mergedRecipes.toResource()
                         )
                     }
                 }
@@ -103,7 +149,7 @@ class RecipesListStore :
             onFailure = { error ->
                 updateState { state ->
                     state.copy(
-                        recipesResource = Resource.Error(error)
+                        recipesResource = error.toResource()
                     )
                 }
             }
@@ -113,7 +159,7 @@ class RecipesListStore :
     private suspend fun loadNextPage(state: RecipesListState) {
         recipesApi.getRecipesList(
             page = state.page,
-            category = state.category,
+            category = requireNotNull(state.category),
         ).fold(
             onSuccess = { recipes ->
                 recipes.mergeCachedAndInvoke { mergedRecipes ->
