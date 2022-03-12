@@ -44,7 +44,7 @@ class RecipeDetailsStore :
 
     private suspend fun loadRecipeDetails(id: String) {
         // TODO: check db isLiked or not
-        recipesApi.getDetailedRecipe(id).fold(
+        recipesApi.getRecipeDetails(id).fold(
             onSuccess = { result ->
                 updateState { state ->
                     state.copy(recipeResource = Resource.Data(result))
