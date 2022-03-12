@@ -2,10 +2,7 @@ package on.the.stove.database
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dto.Recipe
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -13,12 +10,15 @@ import tables.AppDatabase
 import tables.FavouriteRecipe
 
 internal class AppDatabaseRepositoryImpl : KoinComponent, AppDatabaseRepository {
-    private val database: AppDatabase by inject()
+    private val databaseDriverFactory: DatabaseDriverFactory by inject()
+
+    private val database: AppDatabase by lazy {
+        AppDatabase(databaseDriverFactory.createDriver())
+    }
 
     override fun observeAllFavouritesRecipes() = database.favouriteRecipesTableQueries
         .getAllFavouriteRecipes()
         .asFlow()
-        .flowOn(ioDispatcher)
         .mapToList()
         .map { favoriteRecipes -> favoriteRecipes.map { it.toRecipe() } }
 

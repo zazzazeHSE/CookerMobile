@@ -5,14 +5,12 @@ import co.touchlab.kermit.StaticConfig
 import io.ktor.client.*
 import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.database.AppDatabaseRepositoryImpl
-import on.the.stove.database.DatabaseDriverFactory
 import on.the.stove.services.network.*
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import tables.AppDatabase
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
@@ -26,11 +24,6 @@ fun initKoin() = initKoin {
     }
 
 val commonModule = module {
-    single {
-        val databaseDriverFactory: DatabaseDriverFactory by inject()
-
-        AppDatabase(databaseDriverFactory.createDriver())
-    }
     single { AppDatabaseRepositoryImpl() } bind AppDatabaseRepository::class
 
     // region Network
