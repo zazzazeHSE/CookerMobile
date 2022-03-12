@@ -10,11 +10,9 @@ struct ReceiptListItemView: View {
                     imageURL: receipt.imageURL,
                     isLiked: receipt.favourite
                 )
-                .frame(minHeight: 165 ,maxHeight: 165)
+            )
+                .frame(minHeight: 165, maxHeight: 165)
                 .cornerRadius(18)
-                favouriteView
-                    .padding(12)
-            }
             Text(receipt.title)
                 .padding(.top, 14)
                 .padding(.bottom, 16)
@@ -41,6 +39,7 @@ struct ReceiptListItemView: View {
         .background(receipt.favourite ? Colors.orange: .gray )
         .clipShape(Circle())
     }
+}
 
 #if DEBUG
 struct ReceiptListItemView_Previews: PreviewProvider {

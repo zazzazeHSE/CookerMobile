@@ -2,19 +2,26 @@ import SwiftUI
 import Foundation
 
 struct SimpleReceiptView: View {
-    let receipt: Receipt
+    let receipt: SimpleRecipe
     @State private var selectedSegment: PickerItems = .description
     var body: some View {
         VStack(alignment: .leading) {
             ReceiptImageView(
                 model: .init(
-                    imageURL: receipt.imageURL,
+                    imageURL: receipt.imageUrl,
                     isLiked: receipt.favourite
                 )
             )
             titleView
             pickerView
-            pickerSelectionBasedView
+            switch selectedSegment {
+            case .description:
+                descriptionView
+            case .ingredients:
+                ingredientsView
+            case .recipe:
+                recipeView
+            }
             Spacer()
         }
         .padding(.horizontal)
@@ -46,17 +53,6 @@ struct SimpleReceiptView: View {
         .background(Color.white)
     }
 
-    private var pickerSelectionBasedView: some View {
-        switch selectedSegment {
-        case .description:
-            return descriptionView
-        case .ingredients:
-            return ingredientsView
-        case .recipe:
-            return recipeView
-        }
-    }
-
     private var descriptionView: some View {
         Text(receipt.description)
             .font(.system(size: 15))
@@ -66,9 +62,9 @@ struct SimpleReceiptView: View {
 
     private var ingredientsView: some View {
         VStack {
-            ForEach(receipt.ingredients, id: \.title) { ingredient in
+            ForEach(receipt.ingredients, id: \.name) { ingredient in
                 HStack {
-                    Text(ingredient.title)
+                    Text(ingredient.name)
                     Spacer()
                     Text(ingredient.value)
                 }
@@ -78,10 +74,11 @@ struct SimpleReceiptView: View {
 
     private var recipeView: some View {
         VStack {
-            ForEach(receipt.recipe.steps, id: \.index) { step in
-                Text("\(step.index). ")
-                    .foregroundColor(Colors.orange) +
-                 (Text(step.description).lineLimit(nil) as! Text)
+            ForEach(receipt.steps, id: \.id) { step in
+                AsyncImage(url: step.imageUrl)
+                ForEach(step.steps, id: \.self) { recipeStep in
+                    Text(recipeStep)
+                }
             }
         }
     }
@@ -104,14 +101,13 @@ struct SimpleReceiptView_Previews: PreviewProvider {
     static var previews: some View {
         SimpleReceiptView(
             receipt: .init(
+                id: "",
                 title: "Пряный суп из батата",
-                imageURL: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
-                rating: 4.5,
-                ratesCount: 60,
+                description: "dfa",
                 favourite: true,
-                description: "sda",
-                ingredients: [.init(title: "Творог 5%", value: "400 г.")],
-                recipe: .init(steps: [.init(index: 1, description: "Почистить")])
+                imageUrl: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
+                ingredients: [],
+                steps: []
             )
         )
             .previewDevice(PreviewDevice(rawValue: "iPhone 13 Pro Max"))

@@ -27,7 +27,8 @@
 		8451D4D927CEA8E4005FC01E /* ReceiptImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451D4D827CEA8E4005FC01E /* ReceiptImageView.swift */; };
 		8451D4DB27CEAB8A005FC01E /* SimpleReceiptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451D4DA27CEAB8A005FC01E /* SimpleReceiptView.swift */; };
 		8451D4DD27CEAEDC005FC01E /* SegmentedPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451D4DC27CEAEDC005FC01E /* SegmentedPicker.swift */; };
-		8467FDC427DC8C800088A20B /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDC327DC8C800088A20B /* Receipt.swift */; };
+		8467FDC827DC8DE00088A20B /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDC727DC8DE00088A20B /* Receipt.swift */; };
+		8467FDCB27DC8EBC0088A20B /* SimpleRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -66,7 +67,8 @@
 		8451D4D827CEA8E4005FC01E /* ReceiptImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptImageView.swift; sourceTree = "<group>"; };
 		8451D4DA27CEAB8A005FC01E /* SimpleReceiptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleReceiptView.swift; sourceTree = "<group>"; };
 		8451D4DC27CEAEDC005FC01E /* SegmentedPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedPicker.swift; sourceTree = "<group>"; };
-		8467FDC327DC8C800088A20B /* Receipt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Receipt.swift; path = iosApp/PresentationLayer/Receipts/Models/Receipt.swift; sourceTree = SOURCE_ROOT; };
+		8467FDC727DC8DE00088A20B /* Receipt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleRecipe.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,7 +152,7 @@
 		842E388727CB9728000BF352 /* ReceiptsList */ = {
 			isa = PBXGroup;
 			children = (
-				843D698A27D76C9A00DEA4AD /* Models */,
+				8467FDC627DC8DE00088A20B /* Models */,
 				843D698927D76C5A00DEA4AD /* Subviews */,
 				7555FF82242A565900829871 /* ReceiptsListView.swift */,
 				842E388827CB9748000BF352 /* ReceiptsRouter.swift */,
@@ -204,17 +206,10 @@
 			path = Subviews;
 			sourceTree = "<group>";
 		};
-		843D698A27D76C9A00DEA4AD /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				8467FDC327DC8C800088A20B /* Receipt.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		8451D4D627CE9C75005FC01E /* SimpleReceipt */ = {
 			isa = PBXGroup;
 			children = (
+				8467FDC927DC8E9C0088A20B /* Models */,
 				8451D4DA27CEAB8A005FC01E /* SimpleReceiptView.swift */,
 			);
 			path = SimpleReceipt;
@@ -243,6 +238,23 @@
 				8451D4D827CEA8E4005FC01E /* ReceiptImageView.swift */,
 			);
 			path = CommonViews;
+			sourceTree = "<group>";
+		};
+		8467FDC627DC8DE00088A20B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8467FDC727DC8DE00088A20B /* Receipt.swift */,
+			);
+			name = Models;
+			path = iosApp/PresentationLayer/Receipt/ReceiptsList/Models;
+			sourceTree = SOURCE_ROOT;
+		};
+		8467FDC927DC8E9C0088A20B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -345,7 +357,7 @@
 				842E388C27CB9CBD000BF352 /* Colors.swift in Sources */,
 				842E389527CBFB8E000BF352 /* Images.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				8467FDC427DC8C800088A20B /* Receipt.swift in Sources */,
+				8467FDC827DC8DE00088A20B /* Receipt.swift in Sources */,
 				8451D4D927CEA8E4005FC01E /* ReceiptImageView.swift in Sources */,
 				8451D4DD27CEAEDC005FC01E /* SegmentedPicker.swift in Sources */,
 				842E388127CB9589000BF352 /* Router.swift in Sources */,
@@ -355,6 +367,7 @@
 				842E388327CB95A1000BF352 /* NavigationModifier.swift in Sources */,
 				7555FF83242A565900829871 /* ReceiptsListView.swift in Sources */,
 				843D698E27D76CB100DEA4AD /* ReceiptsListModel.swift in Sources */,
+				8467FDCB27DC8EBC0088A20B /* SimpleRecipe.swift in Sources */,
 				843D698827D76A6400DEA4AD /* Changeable.swift in Sources */,
 				7555FF83242A565900829871 /* ReceiptsListView.swift in Sources */,
 			);
