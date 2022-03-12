@@ -5,24 +5,14 @@ struct ReceiptListItemView: View {
     let receipt: Receipt
     var body: some View {
         VStack(alignment: .leading) {
-            ZStack(alignment: .topTrailing) {
-                AsyncImage(
-                    url: receipt.imageURL,
-                    scale: 1.0,
-                    content: { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    },
-                    placeholder: {
-                        ProgressView()
-                    }
+            ReceiptImageView(
+                model: .init(
+                    imageURL: receipt.imageURL,
+                    isLiked: receipt.favourite
                 )
-                .frame(minHeight: 165 ,maxHeight: 165)
+            )
+                .frame(minHeight: 165, maxHeight: 165)
                 .cornerRadius(18)
-                favouriteView
-                    .padding(12)
-            }
             Text(receipt.title)
                 .padding(.top, 14)
                 .padding(.bottom, 16)
@@ -62,7 +52,7 @@ struct ReceiptListItemView_Previews: PreviewProvider {
                 favourite: true
             )
         )
-            .previewLayout(.device)
+            .previewLayout(.sizeThatFits)
     }
 }
 #endif

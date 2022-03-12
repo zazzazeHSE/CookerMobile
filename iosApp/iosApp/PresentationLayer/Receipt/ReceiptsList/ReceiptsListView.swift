@@ -5,7 +5,7 @@ protocol ReceiptsViewRouter: Router {
 
 }
 
-struct ReceiptsView: View {
+struct ReceiptsListView: View {
     let router: ReceiptsViewRouter
     @State private var selectedMenuState: MenuItems = .popular
     @ObservedObject var viewModel: ReceiptsViewModel
@@ -110,7 +110,7 @@ struct ReceiptsView: View {
 #if DEBUG
 struct ReceiptsView_Previews: PreviewProvider {
 	static var previews: some View {
-        ReceiptsView(
+        ReceiptsListView(
             router: ReceiptsRouter(
                 isPresented: .constant(false)
             ),
