@@ -10,11 +10,11 @@ struct ReceiptListItemView: View {
                     imageURL: receipt.imageURL,
                     isLiked: receipt.favourite
                 )
+            )
                 .frame(minHeight: 165 ,maxHeight: 165)
                 .cornerRadius(18)
                 favouriteView
                     .padding(12)
-            }
             Text(receipt.title)
                 .padding(.top, 14)
                 .padding(.bottom, 16)

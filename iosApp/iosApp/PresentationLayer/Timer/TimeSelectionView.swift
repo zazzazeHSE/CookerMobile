@@ -2,7 +2,7 @@ import SwiftUI
 
 struct TimeSelectionView: View {
     @State var hours: Date = .now
-    let onClose: () -> Void
+    @ObservedObject var viewModel: TimeSelectionViewModel
     var body: some View {
         GeometryReader { reader in
             HStack {
@@ -34,7 +34,7 @@ struct TimeSelectionView: View {
             }
             .background(.ultraThinMaterial)
             .onTapGesture {
-                onClose()
+                viewModel.onBackgroundTap()
             }
         }
     }
@@ -43,7 +43,7 @@ struct TimeSelectionView: View {
         HStack {
             Button(
                 action: {
-                    onClose()
+                    viewModel.onCancelButtonTap()
                 }
             ) {
                 Text("Закрыть")
@@ -71,6 +71,6 @@ struct TimeSelectionView: View {
 
 struct TimeSelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSelectionView(onClose: { })
+        TimeSelectionView(viewModel: .init {  })
     }
 }

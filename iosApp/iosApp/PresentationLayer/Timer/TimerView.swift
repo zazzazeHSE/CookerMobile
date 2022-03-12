@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TimerView: View {
-    @Binding var showTimeSelectionView: Bool
+    @ObservedObject var viewModel: TimerViewModel
     var body: some View {
         VStack {
             Image(systemName: "timer")
@@ -13,13 +13,13 @@ struct TimerView: View {
         .background(Colors.orange)
         .cornerRadius(17)
         .onTapGesture {
-            showTimeSelectionView = true
+            viewModel.onTimerTap()
         }
     }
 }
 
 struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
-        TimerView(showTimeSelectionView: .constant(false))
+        TimerView(viewModel: .init { })
     }
 }

@@ -22,6 +22,22 @@ struct Flow<Content>: View where Content: View {
     }
 }
 
+struct OverFlow<Content>: View where Content: View {
+    @ObservedObject var state: FlowState
+    var content: Content
+    var body: some View {
+        VStack {
+            if state.next {
+                content
+            }
+        }
+    }
+    init(state: FlowState, @ViewBuilder content: () -> Content) {
+        self.state = state
+        self.content = content()
+    }
+}
+
 struct LazyView<Content: View>: View {
     let build: () -> Content
     init(_ build: @autoclosure @escaping () -> Content) {
