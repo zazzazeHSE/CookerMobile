@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ReceiptImageModel {
-    let imageURL: URL
+    let imageURL: URL?
     let isLiked: Bool
 }
 

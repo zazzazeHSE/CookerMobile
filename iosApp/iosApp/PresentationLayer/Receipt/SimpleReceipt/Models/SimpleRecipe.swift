@@ -5,7 +5,7 @@ struct SimpleRecipe {
     let title: String
     let description: String
     let favourite: Bool
-    let imageUrl: URL
+    let imageUrl: URL?
     let ingredients: [Ingredient]
     let steps: [Step]
 }

@@ -29,6 +29,8 @@
 		8451D4DD27CEAEDC005FC01E /* SegmentedPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451D4DC27CEAEDC005FC01E /* SegmentedPicker.swift */; };
 		8467FDC827DC8DE00088A20B /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDC727DC8DE00088A20B /* Receipt.swift */; };
 		8467FDCB27DC8EBC0088A20B /* SimpleRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */; };
+		8467FDCD27DC93F00088A20B /* SimpleReceiptViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDCC27DC93F00088A20B /* SimpleReceiptViewModel.swift */; };
+		8467FDD027DC977D0088A20B /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDCF27DC977D0088A20B /* Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,6 +71,8 @@
 		8451D4DC27CEAEDC005FC01E /* SegmentedPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedPicker.swift; sourceTree = "<group>"; };
 		8467FDC727DC8DE00088A20B /* Receipt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
 		8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleRecipe.swift; sourceTree = "<group>"; };
+		8467FDCC27DC93F00088A20B /* SimpleReceiptViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleReceiptViewModel.swift; sourceTree = "<group>"; };
+		8467FDCF27DC977D0088A20B /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +215,7 @@
 			children = (
 				8467FDC927DC8E9C0088A20B /* Models */,
 				8451D4DA27CEAB8A005FC01E /* SimpleReceiptView.swift */,
+				8467FDCC27DC93F00088A20B /* SimpleReceiptViewModel.swift */,
 			);
 			path = SimpleReceipt;
 			sourceTree = "<group>";
@@ -225,6 +230,7 @@
 		8451D4DE27CEB6F7005FC01E /* Receipt */ = {
 			isa = PBXGroup;
 			children = (
+				8467FDCE27DC976D0088A20B /* Base */,
 				8451D4DF27CEB708005FC01E /* CommonViews */,
 				8451D4D627CE9C75005FC01E /* SimpleReceipt */,
 				842E388727CB9728000BF352 /* ReceiptsList */,
@@ -255,6 +261,14 @@
 				8467FDCA27DC8EBC0088A20B /* SimpleRecipe.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		8467FDCE27DC976D0088A20B /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				8467FDCF27DC977D0088A20B /* Model.swift */,
+			);
+			path = Base;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -362,6 +376,8 @@
 				8451D4DD27CEAEDC005FC01E /* SegmentedPicker.swift in Sources */,
 				842E388127CB9589000BF352 /* Router.swift in Sources */,
 				842E388F27CB9E05000BF352 /* SearchView.swift in Sources */,
+				8467FDCD27DC93F00088A20B /* SimpleReceiptViewModel.swift in Sources */,
+				8467FDD027DC977D0088A20B /* Model.swift in Sources */,
 				842E389327CBF794000BF352 /* ReceiptListItemView.swift in Sources */,
 				842E388927CB9748000BF352 /* ReceiptsRouter.swift in Sources */,
 				842E388327CB95A1000BF352 /* NavigationModifier.swift in Sources */,

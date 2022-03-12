@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 protocol ReceiptsViewRouter: Router {
-
+    func navigateToSimpleRecipe(recipeId: String)
 }
 
 struct ReceiptsListView: View {
