@@ -30,7 +30,6 @@ internal class AppDatabaseRepositoryImpl : KoinComponent, AppDatabaseRepository 
     override fun addFavouriteRecipe(recipe: Recipe) = database.favouriteRecipesTableQueries
         .insertOrUpdateFavoriteRecipes(
             id = recipe.id,
-            author = recipe.author,
             description = recipe.description,
             title = recipe.title,
             imageUrl = recipe.imageUrl,
@@ -41,7 +40,6 @@ internal class AppDatabaseRepositoryImpl : KoinComponent, AppDatabaseRepository 
 
     private fun FavouriteRecipe.toRecipe() = Recipe(
         id = id,
-        author = author,
         title = title,
         description = description,
         imageUrl = imageUrl,
