@@ -5,28 +5,26 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.withContext
 import on.the.stove.dispatchers.ktorDispatcher
 import on.the.stove.dto.Category
-import on.the.stove.dto.Recipe
 import on.the.stove.services.responseModels.Response
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-internal interface RecipesApi {
+private typealias Categories = List<Category>
 
-    suspend fun getRecipesList(page: Int?, category: Category): Result<List<Recipe>>
+internal interface CategoriesApi {
+
+    suspend fun getCategories(): Result<Categories>
 }
 
-internal class RecipeApiImpl : RecipesApi, KoinComponent {
+internal class CategoriesApiImpl : CategoriesApi, KoinComponent {
 
     private val hostUrl: String by inject(HostQualifier)
     private val client: HttpClient by inject()
 
-    override suspend fun getRecipesList(page: Int?, category: Category): Result<List<Recipe>> {
+    override suspend fun getCategories(): Result<Categories> {
         return withContext(ktorDispatcher) {
-            runCatching<Response<List<Recipe>>> {
-                client.get("$hostUrl/recipes") {
-                    parameter("page", page)
-                    parameter("category", category.id)
-                }
+            runCatching<Response<Categories>> {
+                client.get("$hostUrl/recipe/categories")
             }.map { it.payload }
         }
     }

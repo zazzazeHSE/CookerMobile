@@ -6,20 +6,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import on.the.stove.core.Resource
 import on.the.stove.core.toResource
-import on.the.stove.database.AppDatabaseManager
+import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
-import on.the.stove.services.network.RecipeApiImpl
+import on.the.stove.services.network.CategoriesApi
 import on.the.stove.services.network.RecipesApi
+import org.koin.core.component.inject
 
 @OptIn(ObsoleteCoroutinesApi::class)
 class RecipesListStore :
     BaseStore<RecipesListState, RecipesListAction, RecipesListEffect>() {
 
-    // TODO: Use DI in future
-    private val recipesApi: RecipesApi = RecipeApiImpl()
-    private val appDatabaseManager = AppDatabaseManager()
+    private val recipesApi: RecipesApi by inject()
+    private val categoriesApi: CategoriesApi by inject()
+    private val appDatabaseRepository: AppDatabaseRepository by inject()
 
     override val stateFlow: MutableStateFlow<RecipesListState> =
         MutableStateFlow(RecipesListState())
@@ -28,20 +29,29 @@ class RecipesListStore :
     override suspend fun reduce(action: RecipesListAction, initialState: RecipesListState) {
         when (action) {
             is RecipesListAction.Init -> {
-                scope.launch(ioDispatcher) {
-                    appDatabaseManager.observeAllFavouritesRecipes().collect { favouriteRecipes ->
-                        val favouriteIds = favouriteRecipes.map(Recipe::id)
+                observeFavouritesRecipes()
+                loadCategories()
 
-                        updateState { state ->
-                            state.copy(
-                                recipesResource = state.recipesResource.value?.map { recipe ->
-                                    recipe.copy(
-                                        isLiked = favouriteIds.contains(recipe.id)
-                                    )
-                                }?.toResource() ?: state.recipesResource
-                            )
+                when (val categoriesRes = stateFlow.value.categoriesResource) {
+                    is Resource.Data -> {
+                        val categories = categoriesRes.value
+
+                        if (categories.isEmpty()) {
+                            updateState { state ->
+                                state.copy(
+                                    categoriesResource = IllegalArgumentException("Empty categories").toResource()
+                                )
+                            }
+                        } else {
+                            updateState { state ->
+                                state.copy(
+                                    category = categories.first()
+                                )
+                            }
                         }
+
                     }
+                    else -> return
                 }
 
                 updateState { state ->
@@ -78,24 +88,60 @@ class RecipesListStore :
                 }
 
                 if (recipe.isLiked) {
-                    appDatabaseManager.removeFavouriteRecipe(recipe.id)
+                    appDatabaseRepository.removeFavouriteRecipe(recipe.id)
                 } else {
-                    appDatabaseManager.addFavouriteRecipe(recipe)
+                    appDatabaseRepository.addFavouriteRecipe(recipe)
                 }
             }
         }
     }
 
+    private fun observeFavouritesRecipes() = scope.launch(ioDispatcher) {
+        appDatabaseRepository.observeAllFavouritesRecipes()
+            .collect { favouriteRecipes ->
+                val favouriteIds = favouriteRecipes.map(Recipe::id)
+
+                updateState { state ->
+                    state.copy(
+                        recipesResource = state.recipesResource.value?.map { recipe ->
+                            recipe.copy(
+                                isLiked = favouriteIds.contains(recipe.id)
+                            )
+                        }?.toResource() ?: state.recipesResource
+                    )
+                }
+            }
+    }
+
+    private suspend fun loadCategories() {
+        categoriesApi.getCategories().fold(
+            onSuccess = { categories ->
+                updateState { state ->
+                    state.copy(
+                        categoriesResource = categories.toResource()
+                    )
+                }
+            },
+            onFailure = { error ->
+                updateState { state ->
+                    state.copy(
+                        categoriesResource = error.toResource()
+                    )
+                }
+            }
+        )
+    }
+
     private suspend fun loadRecipes(state: RecipesListState) {
         recipesApi.getRecipesList(
             page = state.page,
-            category = state.category,
+            category = requireNotNull(state.category),
         ).fold(
             onSuccess = { recipes ->
                 recipes.mergeCachedAndInvoke { mergedRecipes ->
                     updateState { state ->
                         state.copy(
-                            recipesResource = Resource.Data(mergedRecipes)
+                            recipesResource = mergedRecipes.toResource()
                         )
                     }
                 }
@@ -103,7 +149,7 @@ class RecipesListStore :
             onFailure = { error ->
                 updateState { state ->
                     state.copy(
-                        recipesResource = Resource.Error(error)
+                        recipesResource = error.toResource()
                     )
                 }
             }
@@ -113,7 +159,7 @@ class RecipesListStore :
     private suspend fun loadNextPage(state: RecipesListState) {
         recipesApi.getRecipesList(
             page = state.page,
-            category = state.category,
+            category = requireNotNull(state.category),
         ).fold(
             onSuccess = { recipes ->
                 recipes.mergeCachedAndInvoke { mergedRecipes ->
@@ -138,7 +184,7 @@ class RecipesListStore :
     }
 
     private suspend inline fun List<Recipe>.mergeCachedAndInvoke(crossinline andThen: suspend (mergedRecipes: List<Recipe>) -> Unit) {
-        val dbRecipes = appDatabaseManager.getAllFavouritesRecipes()
+        val dbRecipes = appDatabaseRepository.getAllFavouritesRecipes()
 
         val mergedRecipes = map { recipe ->
             if (dbRecipes.find { it.id == recipe.id } != null) {

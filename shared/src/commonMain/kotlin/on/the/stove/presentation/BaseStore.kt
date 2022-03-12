@@ -11,9 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dispatchers.uiDispatcher
+import org.koin.core.component.KoinComponent
 
 @OptIn(ObsoleteCoroutinesApi::class)
-abstract class BaseStore<State, Action, Effect> {
+abstract class BaseStore<State, Action, Effect> : KoinComponent {
 
     @Deprecated("Use flow")
     private var updateCallback: ((state: State) -> Unit)? = null
