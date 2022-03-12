@@ -11,14 +11,11 @@ struct iOSApp: App {
         controller.view = view
         self.controller = controller
         self.view = view
+        KoinFactoryKt.doInitKoin()
     }
 	var body: some Scene {
 		WindowGroup {
             view
 		}
 	}
-
-	init() {
-        KoinFactoryKt.doInitKoin()
-    }
 }

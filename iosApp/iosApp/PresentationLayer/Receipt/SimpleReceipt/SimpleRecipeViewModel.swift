@@ -3,14 +3,14 @@ import shared
 
 final class SimpleRecipeViewModel: ObservableObject {
     @Published var model: Model<SimpleRecipe> = .loading
-    private let presenter = DetailedRecipeStore()
+    private let presenter = RecipeDetailsStore()
 
     init(recipeId: String) {
         presenter.attachView(updateCallback: didChangeState(_:))
-        presenter.reduce(action: DetailedRecipeAction.Init(id: recipeId))
+        presenter.reduce(action: RecipeDetailsAction.Init(id: recipeId))
     }
 
-    private func didChangeState(_ state: DetailedRecipeState?) {
+    private func didChangeState(_ state: RecipeDetailsState?) {
         guard let state = state else {
             return
         }
@@ -27,12 +27,12 @@ final class SimpleRecipeViewModel: ObservableObject {
 }
 
 extension SimpleRecipeViewModel {
-    func dtoToModel(dto: DetailedRecipe) -> SimpleRecipe {
+    func dtoToModel(dto: RecipeDetails) -> SimpleRecipe {
         return .init(
             id: dto.id,
             title: dto.title,
             description: dto.description_,
-            favourite: false,
+            favourite: dto.isLiked,
             imageUrl: URL(string: dto.imageUrl),
             ingredients: dto.ingredients.map { .init(name: $0.name, value: $0.value) },
             steps: dto.steps.map { .init(imageUrl: URL(string: $0.imageUrl), steps: $0.steps) }
