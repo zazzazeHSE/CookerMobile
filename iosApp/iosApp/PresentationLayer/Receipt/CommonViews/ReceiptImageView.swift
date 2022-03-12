@@ -25,7 +25,7 @@ struct ReceiptImageView: View {
                 }
             )
                 .frame(minWidth: 100, minHeight: 165, maxHeight: 165)
-            .cornerRadius(18)
+                .cornerRadius(18)
             favouriteView
                 .padding(12)
         }

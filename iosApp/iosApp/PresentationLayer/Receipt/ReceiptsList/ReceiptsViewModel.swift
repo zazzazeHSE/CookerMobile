@@ -11,8 +11,12 @@ class ReceiptsViewModel: ObservableObject {
         error: nil
     )
     private let presenter = RecipesListStore()
+    private let openRecipeView: (String) -> Void
 
-    init() {
+    init(
+        openRecipeView: @escaping (String) -> Void
+    ) {
+        self.openRecipeView = openRecipeView
         presenter.attachView(updateCallback: didChangeState(_:))
 
         presenter.reduce(action: RecipesListAction.Init())
@@ -22,6 +26,10 @@ class ReceiptsViewModel: ObservableObject {
         if model.listModel.isFull { return }
 
         presenter.reduce(action: RecipesListAction.LoadNextPage())
+    }
+
+    func didTapToRecipe(_ recipe: Receipt) {
+        openRecipeView(recipe.id)
     }
 
     private func didChangeState(_ state: RecipesListState?) {

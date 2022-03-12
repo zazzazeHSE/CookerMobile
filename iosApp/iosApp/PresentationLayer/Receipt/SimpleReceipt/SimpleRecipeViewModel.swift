@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-final class SimpleReceiptViewModel {
+final class SimpleRecipeViewModel: ObservableObject {
     @Published var model: Model<SimpleRecipe> = .loading
     private let presenter = DetailedRecipeStore()
 
@@ -20,13 +20,13 @@ final class SimpleReceiptViewModel {
         } else if let error = state.recipeResource.throwable {
             model = .error(error.message ?? "Unexpected error")
         } else {
-            model = .error("Unexpected error")
+            model = .loading
         }
     }
 
 }
 
-extension SimpleReceiptViewModel {
+extension SimpleRecipeViewModel {
     func dtoToModel(dto: DetailedRecipe) -> SimpleRecipe {
         return .init(
             id: dto.id,

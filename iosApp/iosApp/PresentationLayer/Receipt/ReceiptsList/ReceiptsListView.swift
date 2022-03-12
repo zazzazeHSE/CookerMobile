@@ -1,30 +1,19 @@
 import SwiftUI
 import shared
 
-protocol ReceiptsViewRouter: Router {
-    func navigateToSimpleRecipe(recipeId: String)
-}
-
 struct ReceiptsListView: View {
-    let router: ReceiptsViewRouter
     @State private var selectedMenuState: MenuItems = .popular
     @ObservedObject var viewModel: ReceiptsViewModel
 
-    init(
-        router: ReceiptsViewRouter,
-        viewModel: ReceiptsViewModel
-    ) {
-        self.router = router
+    init(viewModel: ReceiptsViewModel) {
         self.viewModel = viewModel
     }
 
 	var body: some View {
-        NavigationView {
-            VStack {
-                receiptsList
-            }
-            .navigationBarTitle(Text("Какой рецепт Вы ищете?"))
+        VStack {
+            receiptsList
         }
+        .navigationBarTitle(Text("Какой рецепт Вы ищете?"))
 	}
 
     private var titleText: some View {
@@ -78,6 +67,9 @@ struct ReceiptsListView: View {
                         }
                     }
                     .background(.clear)
+                    .onTapGesture {
+                        viewModel.didTapToRecipe(receipt)
+                    }
             }
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
@@ -111,10 +103,7 @@ struct ReceiptsListView: View {
 struct ReceiptsView_Previews: PreviewProvider {
 	static var previews: some View {
         ReceiptsListView(
-            router: ReceiptsRouter(
-                isPresented: .constant(false)
-            ),
-            viewModel: .init()
+            viewModel: .init(openRecipeView: { _ in })
         )
 	}
 }
