@@ -7,7 +7,7 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.http.*
 
-internal object NetworkService {
+internal class NetworkService {
 
     val httpClient = HttpClient {
         install(JsonFeature) {
