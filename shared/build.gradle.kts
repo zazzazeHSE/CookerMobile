@@ -95,6 +95,7 @@ android {
 
 sqldelight {
     database("AppDatabase") {
-        packageName = "com.example.db"
+        packageName = "tables"
+        sourceFolders = listOf("sqldelight")
     }
 }

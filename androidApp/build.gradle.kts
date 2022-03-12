@@ -60,4 +60,6 @@ dependencies {
     implementation("io.coil-kt:coil:1.4.0")
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("com.github.skydoves:landscapist-coil:1.4.8")
+
+    implementation("io.insert-koin:koin-android:3.1.2")
 }

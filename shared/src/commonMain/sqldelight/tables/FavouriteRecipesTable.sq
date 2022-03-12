@@ -1,0 +1,15 @@
+CREATE TABLE FavouriteRecipe (
+  id TEXT NOT NULL PRIMARY KEY,
+  imageUrl TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL
+);
+
+getAllFavouriteRecipes:
+SELECT * FROM FavouriteRecipe;
+
+insertOrUpdateFavoriteRecipes:
+INSERT OR REPLACE INTO FavouriteRecipe(id, imageUrl, title, description) VALUES (?,?,?,?);
+
+deleteFavouriteRecipe:
+DELETE FROM FavouriteRecipe WHERE id == :id;
