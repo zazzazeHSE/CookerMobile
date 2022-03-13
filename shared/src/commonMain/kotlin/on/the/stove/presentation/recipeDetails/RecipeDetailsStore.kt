@@ -27,6 +27,7 @@ class RecipeDetailsStore :
     override suspend fun reduce(action: RecipeDetailsAction, initialState: RecipeDetailsState) {
         when (action) {
             is RecipeDetailsAction.Init -> {
+                observeFavouritesRecipes()
                 loadRecipeDetails(action.id)
                 observeFavouritesRecipes()
             }
@@ -43,11 +44,13 @@ class RecipeDetailsStore :
     }
 
     private suspend fun loadRecipeDetails(id: String) {
-        // TODO: check db isLiked or not
         recipesApi.getRecipeDetails(id).fold(
             onSuccess = { result ->
+                val liked = appDatabaseRepository.getAllFavouritesRecipes().map(Recipe::id).contains(result.id)
                 updateState { state ->
-                    state.copy(recipeResource = Resource.Data(result))
+                    state.copy(
+                        recipeResource = result.copy(isLiked = liked).toResource()
+                    )
                 }
             },
             onFailure = { error ->
@@ -62,13 +65,14 @@ class RecipeDetailsStore :
         appDatabaseRepository.observeAllFavouritesRecipes()
             .collect { favouriteRecipes ->
                 val favouriteIds = favouriteRecipes.map(Recipe::id)
-
                 updateState { state ->
-                    state.copy(
-                        recipeResource = state.recipeResource.value?.copy(
-                            isLiked = favouriteIds.contains(state.recipeResource.value!!.id)
-                        )?.toResource() ?: state.recipeResource
-                    )
+                    state.recipeResource.value?.let { value ->
+                        state.copy(
+                            recipeResource = value.copy(
+                                isLiked = favouriteIds.contains(value.id)
+                            ).toResource()
+                        )
+                    }?:state
                 }
             }
     }

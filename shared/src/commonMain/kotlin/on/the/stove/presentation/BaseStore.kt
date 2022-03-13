@@ -16,9 +16,6 @@ import org.koin.core.component.KoinComponent
 @OptIn(ObsoleteCoroutinesApi::class)
 abstract class BaseStore<State, Action, Effect> : KoinComponent {
 
-    @Deprecated("Use flow")
-    private var updateCallback: ((state: State) -> Unit)? = null
-
     protected abstract val stateFlow: MutableStateFlow<State>
     protected abstract val sideEffectsFlow: MutableSharedFlow<Effect>
 
@@ -37,17 +34,6 @@ abstract class BaseStore<State, Action, Effect> : KoinComponent {
         Logger.d("[STORE]: ${this::class.simpleName} reduce action ${action!!::class.qualifiedName}")
         scope.launch(ioDispatcher) {
             reduce(action, stateFlow.value)
-        }
-    }
-
-    @Deprecated("Only for support iOS", ReplaceWith("observeState"))
-    fun attachView(updateCallback: (state: State) -> Unit) {
-        this.updateCallback = updateCallback
-
-        scope.launch {
-            stateFlow.collect { state ->
-                updateCallback(state)
-            }
         }
     }
 

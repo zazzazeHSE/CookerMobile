@@ -7,13 +7,17 @@ struct SimpleRecipeView: View {
         switch viewModel.model {
         case .error(let errorText): Text(errorText)
         case .loading: ProgressView()
-        case .data(let recipe): RecipeView(recipe: recipe)
+        case .data(let recipe): RecipeView(
+            recipe: recipe,
+            onLikeButtonTap: { viewModel.didTapOnLikeForReceipt(recipe) }
+        )
         }
     }
 }
 
 private struct RecipeView: View {
     let recipe: SimpleRecipe
+    let onLikeButtonTap: () -> Void
     @State private var selectedSegment: PickerItems = .description
     var body: some View {
         ScrollView {
@@ -22,7 +26,8 @@ private struct RecipeView: View {
                     model: .init(
                         imageURL: recipe.imageUrl,
                         isLiked: recipe.favourite
-                    )
+                    ),
+                    onLikeButtonTap: onLikeButtonTap
                 )
                 titleView
                 pickerView
@@ -126,7 +131,8 @@ struct SimpleReceiptView_Previews: PreviewProvider {
                 imageUrl: URL(string: "https://media.healthkurs.ru/wp-content/uploads/2021/07/sladkij-kartofel.jpg")!,
                 ingredients: [],
                 steps: []
-            )
+            ),
+            onLikeButtonTap: {}
         )
             .previewDevice(PreviewDevice(rawValue: "iPhone 13 Pro Max"))
     }

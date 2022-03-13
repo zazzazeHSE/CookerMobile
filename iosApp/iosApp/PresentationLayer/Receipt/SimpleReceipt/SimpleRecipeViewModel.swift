@@ -3,11 +3,23 @@ import shared
 
 final class SimpleRecipeViewModel: ObservableObject {
     @Published var model: Model<SimpleRecipe> = .loading
-    private let presenter = RecipeDetailsStore()
+    private lazy var store: RecipeDetailsStore = {
+        let store = RecipeDetailsStore()
+        store.observeState().collect(collector: collector, completionHandler: {_,_ in })
+        return store
+    }()
+
+    private lazy var collector: Observer = {
+        let collector = Observer { [weak self] value in
+            if let value = value as? RecipeDetailsState? {
+                self?.didChangeState(value)
+            }
+        }
+        return collector
+    }()
 
     init(recipeId: String) {
-        presenter.attachView(updateCallback: didChangeState(_:))
-        presenter.reduce(action: RecipeDetailsAction.Init(id: recipeId))
+        store.reduce(action: RecipeDetailsAction.Init(id: recipeId))
     }
 
     private func didChangeState(_ state: RecipeDetailsState?) {
@@ -24,6 +36,9 @@ final class SimpleRecipeViewModel: ObservableObject {
         }
     }
 
+    func didTapOnLikeForReceipt(_ recipe: SimpleRecipe) {
+        store.reduce(action: RecipeDetailsAction.Like(id: recipe.id))
+    }
 }
 
 extension SimpleRecipeViewModel {
