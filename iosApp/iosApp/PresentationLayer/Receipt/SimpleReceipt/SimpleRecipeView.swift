@@ -32,14 +32,17 @@ private struct RecipeView: View {
                 titleView
                 pickerView
                     .padding(.bottom, 20)
-                switch selectedSegment {
-                case .description:
-                    descriptionView
-                case .ingredients:
-                    ingredientsView
-                case .recipe:
-                    recipeView
+                VStack {
+                    switch selectedSegment {
+                    case .description:
+                        descriptionView
+                    case .ingredients:
+                        ingredientsView
+                    case .recipe:
+                        recipeView
+                    }
                 }
+                .padding(.bottom, 40)
                 Spacer()
             }
             .padding(.horizontal)

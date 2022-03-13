@@ -7,10 +7,13 @@ protocol FlowControllerViewDelegate: AnyObject {
     func makeSimpleRecipeViewModel() -> SimpleRecipeViewModel
     func makeTimerViewModel() -> TimerViewModel
     func makeTimeSelectionViewModel() -> TimeSelectionViewModel
+    func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel
 }
 
-enum Navigate {
+enum Screen {
+    case any
     case receiptsList
+    case favouritesList
     case simpleRecipe
     case timeSelectionView
 }
@@ -18,27 +21,40 @@ enum Navigate {
 struct FlowControllerView: View, FlowControllerViewProtocol {
     weak var delegate: FlowControllerViewDelegate!
 
-    private let navigateToSimpleRecipeScreen = FlowState()
+    private let navigateToSimpleRecipeScreenFromMain = FlowState()
+    private let navigateToSimpleRecipeScreenFromFavourites = FlowState()
     private let showTimerSelectionScreen = FlowState()
 
     init(modelDelegate: FlowControllerViewDelegate) {
         self.delegate = modelDelegate
     }
 
-    func navigate(to navigateTo: Navigate) {
+    func navigate(to navigateTo: Screen, from: Screen) {
         switch navigateTo {
+        case .any:
+            break
         case .receiptsList:
             break
+        case .favouritesList:
+            break
         case .simpleRecipe:
-            navigateToSimpleRecipeScreen.next = true
+            if from == .receiptsList {
+                navigateToSimpleRecipeScreenFromMain.next = true
+            } else if from == .favouritesList {
+                navigateToSimpleRecipeScreenFromFavourites.next = true
+            }
         case .timeSelectionView:
             withAnimation { showTimerSelectionScreen.next = true }
         }
     }
 
-    func close(_ screen: Navigate) {
+    func close(_ screen: Screen) {
         switch screen {
+        case .any:
+            break
         case .receiptsList:
+            break
+        case .favouritesList:
             break
         case .simpleRecipe:
             break
@@ -47,9 +63,9 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         }
     }
 
-    var receiptsListScreen: LazyView<ReceiptsListView> {
+    var receiptsListScreen: LazyView<CategoriesReceiptsListView> {
         return LazyView(
-            ReceiptsListView(
+            CategoriesReceiptsListView(
                 viewModel: delegate.makeReceiptsListViewModel()
             )
         )
@@ -73,13 +89,19 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
+    var favouritesReceiptsScreen: LazyView<FavouritesReceiptsView> {
+        return LazyView(
+            FavouritesReceiptsView(viewModel: delegate.makeFavouritesReceiptsViewModel())
+        )
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView {
                 NavigationView {
                     VStack {
                         receiptsListScreen
-                        Flow(state: navigateToSimpleRecipeScreen) {
+                        Flow(state: navigateToSimpleRecipeScreenFromMain) {
                             simpleRecipeScreen
                         }
                     }
@@ -89,6 +111,20 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
                     Text("Рецепты")
                 }
                 .tag(0)
+
+                NavigationView {
+                    VStack {
+                        favouritesReceiptsScreen
+                        Flow(state: navigateToSimpleRecipeScreenFromFavourites) {
+                            simpleRecipeScreen
+                        }
+                    }
+                }
+                .tabItem {
+                    Image(systemName: "heart")
+                    Text("Понравившиеся")
+                }
+                .tag(1)
             }
             .accentColor(Colors.orange)
             .onAppear {
@@ -96,7 +132,7 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
             }
             timerView
                 .padding()
-                .padding(.bottom, 40)
+                .padding(.bottom, 50)
             OverFlow(state: showTimerSelectionScreen) {
                 timerSelectionView
             }

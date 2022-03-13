@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-final class SimpleRecipeViewModel: ObservableObject {
+final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
     @Published var model: Model<SimpleRecipe> = .loading
     private lazy var store: RecipeDetailsStore = {
         let store = RecipeDetailsStore()
@@ -9,20 +9,12 @@ final class SimpleRecipeViewModel: ObservableObject {
         return store
     }()
 
-    private lazy var collector: Observer = {
-        let collector = Observer { [weak self] value in
-            if let value = value as? RecipeDetailsState? {
-                self?.didChangeState(value)
-            }
-        }
-        return collector
-    }()
-
     init(recipeId: String) {
+        super.init()
         store.reduce(action: RecipeDetailsAction.Init(id: recipeId))
     }
 
-    private func didChangeState(_ state: RecipeDetailsState?) {
+    override func didChangeState(_ state: RecipeDetailsState?) {
         guard let state = state else {
             return
         }

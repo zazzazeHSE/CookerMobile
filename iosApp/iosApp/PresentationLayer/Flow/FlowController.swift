@@ -1,8 +1,8 @@
 import Foundation
 
 protocol FlowControllerViewProtocol {
-    func navigate(to: Navigate)
-    func close(_ screen: Navigate)
+    func navigate(to: Screen, from: Screen)
+    func close(_ screen: Screen)
 }
 
 class FlowController {
@@ -27,7 +27,7 @@ extension FlowController: FlowControllerViewDelegate {
             this.flow = this.flow.changing { copy in
                 copy.simpleRecipeId = id
             }
-            this.view?.navigate(to: .simpleRecipe)
+            this.view?.navigate(to: .simpleRecipe, from: .receiptsList)
         }
     }
 
@@ -38,13 +38,23 @@ extension FlowController: FlowControllerViewDelegate {
     func makeTimerViewModel() -> TimerViewModel {
         .init { [weak self] in
             guard let this = self else { return }
-            this.view?.navigate(to: .timeSelectionView)
+            this.view?.navigate(to: .timeSelectionView, from: .any)
         }
     }
 
     func makeTimeSelectionViewModel() -> TimeSelectionViewModel {
         .init { [weak self] in
             self?.view?.close(.timeSelectionView)
+        }
+    }
+
+    func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel {
+        .init { [weak self] id in
+            guard let this = self else { return }
+            this.flow = this.flow.changing { copy in
+                copy.simpleRecipeId = id
+            }
+            this.view?.navigate(to: .simpleRecipe, from: .favouritesList)
         }
     }
 }
