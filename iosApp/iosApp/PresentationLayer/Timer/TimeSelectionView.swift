@@ -1,8 +1,13 @@
 import SwiftUI
 
-struct TimeSelectionView: View {
-    @State var hours: Date = .now
-    @ObservedObject var viewModel: TimeSelectionViewModel
+protocol TimeSelectionViewModel: ObservableObject {
+    func didTapStartButton(date: Date)
+    func didTapClose()
+}
+
+struct TimeSelectionView<ViewModel>: View where ViewModel: TimeSelectionViewModel {
+    @State var selectedTime: Date = Date(timeIntervalSince1970: 0)
+    @ObservedObject var viewModel: ViewModel
     var body: some View {
         GeometryReader { reader in
             HStack {
@@ -14,7 +19,7 @@ struct TimeSelectionView: View {
                             .padding(.top, 28)
                         DatePicker(
                             "",
-                            selection: $hours,
+                            selection: $selectedTime,
                             displayedComponents: .hourAndMinute
                         )
                             .datePickerStyle(.wheel)
@@ -34,7 +39,7 @@ struct TimeSelectionView: View {
             }
             .background(.ultraThinMaterial)
             .onTapGesture {
-                viewModel.onBackgroundTap()
+                viewModel.didTapClose()
             }
         }
     }
@@ -43,7 +48,7 @@ struct TimeSelectionView: View {
         HStack {
             Button(
                 action: {
-                    viewModel.onCancelButtonTap()
+                    viewModel.didTapClose()
                 }
             ) {
                 Text("Закрыть")
@@ -55,7 +60,7 @@ struct TimeSelectionView: View {
             .cornerRadius(28.5)
             Button(
                 action: {
-
+                    viewModel.didTapStartButton(date: selectedTime)
                 }
             ) {
                 Text("Старт")
@@ -69,8 +74,20 @@ struct TimeSelectionView: View {
     }
 }
 
+#if DEBUG
 struct TimeSelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSelectionView(viewModel: .init {  })
+        TimeSelectionView(viewModel: TimeSelectionPreviewModel())
     }
 }
+
+private class TimeSelectionPreviewModel: TimeSelectionViewModel {
+    func didTapStartButton(date: Date) {
+
+    }
+
+    func didTapClose() {
+
+    }
+}
+#endif

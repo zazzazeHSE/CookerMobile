@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-class ReceiptsViewModel: BaseViewModel<RecipesListState> {
+class ReceiptsViewModel: BaseViewModel<RecipesListState, RecipesListEffect> {
     @Published var receiptsModel: Model<ReceiptsListModel> = .loading
     @Published var categoriesModel: Model<[CategoryModel]> = .loading
     private lazy var store: RecipesListStore = {

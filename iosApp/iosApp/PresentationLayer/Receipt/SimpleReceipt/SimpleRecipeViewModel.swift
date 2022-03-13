@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
+final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState, RecipeDetailsEffect> {
     @Published var recipeModel: Model<SimpleRecipe> = .loading
     private lazy var store: RecipeDetailsStore = {
         let store = RecipeDetailsStore()
@@ -29,7 +29,7 @@ final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
     }
 
     func didTapOnLikeForReceipt(_ recipe: SimpleRecipe) {
-        store.reduce(action: RecipeDetailsAction.Like(id: recipe.id))
+        store.reduce(action: RecipeDetailsAction.Like())
     }
 }
 

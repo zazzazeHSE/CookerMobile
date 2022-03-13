@@ -12,7 +12,7 @@ sealed class RecipeDetailsAction {
 
     data class Init(val id: String) : RecipeDetailsAction()
 
-    data class Like(val id: String) : RecipeDetailsAction()
+    object Like : RecipeDetailsAction()
 
     data class SelectIngredient(val ingredient: Ingredient): RecipeDetailsAction()
 }
