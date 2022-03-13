@@ -1,6 +1,7 @@
 package on.the.stove.android.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -27,7 +28,8 @@ import on.the.stove.dto.Recipe
 internal fun FeedRecipeList(
     state: LazyListState,
     recipes: List<Recipe>,
-    onLike: (recipe: Recipe) -> Unit
+    onLikeClick: (recipe: Recipe) -> Unit,
+    onRecipeClick: (recipe: Recipe) -> Unit,
 ) {
     LazyColumn(
         state = state,
@@ -38,7 +40,8 @@ internal fun FeedRecipeList(
             item {
                 FeedRecipe(
                     feedRecipe = recipe,
-                    onLike = { onLike.invoke(recipe) }
+                    onLike = { onLikeClick.invoke(recipe) },
+                    onRecipeClick = { onRecipeClick.invoke(recipe) }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -47,8 +50,12 @@ internal fun FeedRecipeList(
 }
 
 @Composable
-private fun FeedRecipe(feedRecipe: Recipe, onLike: () -> Unit) {
-    Card(modifier = Modifier, shape = RoundedCornerShape(16.dp), elevation = 2.dp) {
+private fun FeedRecipe(feedRecipe: Recipe, onLike: () -> Unit, onRecipeClick: () -> Unit) {
+    Card(
+        modifier = Modifier.clickable { onRecipeClick.invoke() },
+        shape = RoundedCornerShape(16.dp),
+        elevation = 2.dp
+    ) {
         Box(contentAlignment = Alignment.TopEnd) {
             Column {
                 CoilImage(
