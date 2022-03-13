@@ -8,6 +8,7 @@ protocol FlowControllerViewDelegate: AnyObject {
     func makeTimerViewModel() -> TimerViewModel
     func makeTimeSelectionViewModel() -> TimeSelectionViewModel
     func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel
+    func makeIngredientsCartViewModel() -> IngredientsCartViewModel
 }
 
 enum Screen {
@@ -63,7 +64,7 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         }
     }
 
-    var receiptsListScreen: LazyView<CategoriesReceiptsListView> {
+    private var receiptsListScreen: LazyView<CategoriesReceiptsListView> {
         return LazyView(
             CategoriesReceiptsListView(
                 viewModel: delegate.makeReceiptsListViewModel()
@@ -71,27 +72,33 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
-    var simpleRecipeScreen: LazyView<SimpleRecipeView> {
+    private var simpleRecipeScreen: LazyView<SimpleRecipeView> {
         return LazyView(
             SimpleRecipeView(viewModel: delegate.makeSimpleRecipeViewModel())
         )
     }
 
-    var timerView: LazyView<TimerView> {
+    private var timerView: LazyView<TimerView> {
         return LazyView(
             TimerView(viewModel: delegate.makeTimerViewModel())
         )
     }
 
-    var timerSelectionView: LazyView<TimeSelectionView> {
+    private var timerSelectionView: LazyView<TimeSelectionView> {
         return LazyView(
             TimeSelectionView(viewModel: delegate.makeTimeSelectionViewModel())
         )
     }
 
-    var favouritesReceiptsScreen: LazyView<FavouritesReceiptsView> {
+    private var favouritesReceiptsScreen: LazyView<FavouritesReceiptsView> {
         return LazyView(
             FavouritesReceiptsView(viewModel: delegate.makeFavouritesReceiptsViewModel())
+        )
+    }
+
+    private var ingredientsCartScreen: LazyView<IngredientsCartView> {
+        return LazyView(
+            IngredientsCartView(viewModel: delegate.makeIngredientsCartViewModel())
         )
     }
 
@@ -125,6 +132,17 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
                     Text("Понравившиеся")
                 }
                 .tag(1)
+
+                NavigationView {
+                    VStack {
+                        ingredientsCartScreen
+                    }
+                }
+                .tabItem {
+                    Image(systemName: "cart")
+                    Text("Корзина")
+                }
+                .tag(2)
             }
             .accentColor(Colors.orange)
             .onAppear {

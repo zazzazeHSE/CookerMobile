@@ -1,13 +1,17 @@
 import SwiftUI
 import Foundation
+#if DEBUG
+import shared
+#endif
 
 struct SimpleRecipeView: View {
     @ObservedObject var viewModel: SimpleRecipeViewModel
     var body: some View {
-        switch viewModel.model {
+        switch viewModel.recipeModel {
         case .error(let errorText): Text(errorText)
         case .loading: ProgressView()
         case .data(let recipe): RecipeView(
+            ingredientsViewModel: viewModel,
             recipe: recipe,
             onLikeButtonTap: { viewModel.didTapOnLikeForReceipt(recipe) }
         )
@@ -15,7 +19,8 @@ struct SimpleRecipeView: View {
     }
 }
 
-private struct RecipeView: View {
+private struct RecipeView<ViewModel>: View where ViewModel: IngredientsListViewModel {
+    let ingredientsViewModel: ViewModel
     let recipe: SimpleRecipe
     let onLikeButtonTap: () -> Void
     @State private var selectedSegment: PickerItems = .description
@@ -42,7 +47,7 @@ private struct RecipeView: View {
                         recipeView
                     }
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 60)
                 Spacer()
             }
             .padding(.horizontal)
@@ -79,15 +84,7 @@ private struct RecipeView: View {
     }
 
     private var ingredientsView: some View {
-        VStack {
-            ForEach(recipe.ingredients, id: \.name) { ingredient in
-                HStack {
-                    Text(ingredient.name)
-                    Spacer()
-                    Text(ingredient.value)
-                }
-            }
-        }
+        IngredientsListView(viewModel: self.ingredientsViewModel)
     }
 
     private var recipeView: some View {
@@ -126,6 +123,7 @@ private struct RecipeView: View {
 struct SimpleReceiptView_Previews: PreviewProvider {
     static var previews: some View {
         RecipeView(
+            ingredientsViewModel: SimpleReceiptViewIngredientsViewModel(),
             recipe: .init(
                 id: "",
                 title: "Пряный суп из батата",
@@ -138,6 +136,16 @@ struct SimpleReceiptView_Previews: PreviewProvider {
             onLikeButtonTap: {}
         )
             .previewDevice(PreviewDevice(rawValue: "iPhone 13 Pro Max"))
+    }
+
+    private class SimpleReceiptViewIngredientsViewModel: IngredientsListViewModel {
+        var model: [Ingredient] = []
+
+        func didTapOnSelectIngredient(_ ingredient: Ingredient) {
+
+        }
+
+
     }
 }
 #endif

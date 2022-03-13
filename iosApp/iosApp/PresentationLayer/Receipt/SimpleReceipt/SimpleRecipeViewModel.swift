@@ -2,7 +2,7 @@ import Foundation
 import shared
 
 final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
-    @Published var model: Model<SimpleRecipe> = .loading
+    @Published var recipeModel: Model<SimpleRecipe> = .loading
     private lazy var store: RecipeDetailsStore = {
         let store = RecipeDetailsStore()
         store.observeState().collect(collector: collector, completionHandler: {_,_ in })
@@ -20,17 +20,38 @@ final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
         }
 
         if let value = state.recipeResource.value {
-            model = .data(dtoToModel(dto: value))
+            recipeModel = .data(dtoToModel(dto: value))
         } else if let error = state.recipeResource.throwable {
-            model = .error(error.message ?? "Unexpected error")
+            recipeModel = .error(error.message ?? "Unexpected error")
         } else {
-            model = .loading
+            recipeModel = .loading
         }
     }
 
     func didTapOnLikeForReceipt(_ recipe: SimpleRecipe) {
         store.reduce(action: RecipeDetailsAction.Like(id: recipe.id))
     }
+}
+
+extension SimpleRecipeViewModel: IngredientsListViewModel {
+    var model: [Ingredient] {
+        get {
+            switch recipeModel {
+            case .data(let data): return data.ingredients
+            default: return []
+            }
+        }
+    }
+
+    func didTapOnSelectIngredient(_ ingredient: Ingredient) {
+        store.reduce(
+            action: RecipeDetailsAction.SelectIngredient(
+                ingredient: ingredient
+            )
+        )
+    }
+
+
 }
 
 extension SimpleRecipeViewModel {
@@ -41,7 +62,7 @@ extension SimpleRecipeViewModel {
             description: dto.description_,
             favourite: dto.isLiked,
             imageUrl: URL(string: dto.imageUrl),
-            ingredients: dto.ingredients.map { .init(name: $0.name, value: $0.value) },
+            ingredients: dto.ingredients,
             steps: dto.steps.map { .init(imageUrl: URL(string: $0.imageUrl), steps: $0.steps) }
         )
     }

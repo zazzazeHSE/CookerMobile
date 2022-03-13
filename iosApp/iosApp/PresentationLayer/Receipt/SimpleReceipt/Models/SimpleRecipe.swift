@@ -1,4 +1,5 @@
 import Foundation
+import shared
 
 struct SimpleRecipe {
     let id: String
@@ -8,12 +9,6 @@ struct SimpleRecipe {
     let imageUrl: URL?
     let ingredients: [Ingredient]
     let steps: [Step]
-}
-
-struct Ingredient {
-    let id = UUID().uuidString
-    let name: String
-    let value: String
 }
 
 struct Step {

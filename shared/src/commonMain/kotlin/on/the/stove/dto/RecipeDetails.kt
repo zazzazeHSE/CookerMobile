@@ -26,8 +26,11 @@ data class RecipeDetails(
 @Serializable
 data class Ingredient(
     val name: String,
-    val value: String
-)
+    val value: String,
+    val inCart: Boolean = false
+) {
+    val id: String = "${name}_$value"
+}
 
 @Serializable
 data class Step(

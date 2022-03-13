@@ -3,11 +3,13 @@ package on.the.stove.presentation.recipeDetails
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import on.the.stove.core.Resource
 import on.the.stove.core.toResource
 import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
+import on.the.stove.dto.Ingredient
 import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipesApi
@@ -28,8 +30,8 @@ class RecipeDetailsStore :
         when (action) {
             is RecipeDetailsAction.Init -> {
                 observeFavouritesRecipes()
+                observeIngredientsInCart()
                 loadRecipeDetails(action.id)
-                observeFavouritesRecipes()
             }
             is RecipeDetailsAction.Like -> {
                 val recipeDetails = requireNotNull(stateFlow.value.recipeResource.value)
@@ -40,6 +42,15 @@ class RecipeDetailsStore :
                     appDatabaseRepository.addFavouriteRecipe(recipeDetails.recipe)
                 }
             }
+            is RecipeDetailsAction.SelectIngredient -> {
+                val ingredient = action.ingredient
+
+                if (ingredient.inCart) {
+                    appDatabaseRepository.removeIngredient(ingredient)
+                } else {
+                    appDatabaseRepository.addIngredient(ingredient)
+                }
+            }
         }
     }
 
@@ -47,9 +58,18 @@ class RecipeDetailsStore :
         recipesApi.getRecipeDetails(id).fold(
             onSuccess = { result ->
                 val liked = appDatabaseRepository.getAllFavouritesRecipes().map(Recipe::id).contains(result.id)
+                val ingredientsInCart = appDatabaseRepository.getAllIngredients().map(Ingredient::id)
+
                 updateState { state ->
                     state.copy(
-                        recipeResource = result.copy(isLiked = liked).toResource()
+                        recipeResource = result.copy(
+                            isLiked = liked,
+                            ingredients = result.ingredients.map { ingredient ->
+                                ingredient.copy(
+                                    inCart = ingredientsInCart.contains(ingredient.id)
+                                )
+                            }
+                        ).toResource()
                     )
                 }
             },
@@ -73,6 +93,25 @@ class RecipeDetailsStore :
                             ).toResource()
                         )
                     }?:state
+                }
+            }
+    }
+
+    private fun observeIngredientsInCart() = scope.launch(ioDispatcher) {
+        appDatabaseRepository.observeAllIngredients()
+            .collect { ingredients ->
+                val ingredientsInCart = ingredients.map(Ingredient::id)
+                updateState { state ->
+                    state.recipeResource.value?.let { value ->
+                        state.copy(
+                            recipeResource = value.copy(
+                                ingredients = value.ingredients.map { ingredient ->
+                                    print(ingredientsInCart.contains(ingredient.id))
+                                    ingredient.copy(inCart = ingredientsInCart.contains(ingredient.id))
+                                }
+                            ).toResource()
+                        )
+                    }?: state
                 }
             }
     }
