@@ -6,7 +6,7 @@ protocol TimeSelectionViewModel: ObservableObject {
 }
 
 struct TimeSelectionView<ViewModel>: View where ViewModel: TimeSelectionViewModel {
-    @State var selectedTime: Date = Date()
+    @State var selectedTime: Date = Date(timeIntervalSince1970: 0)
     @ObservedObject var viewModel: ViewModel
     var body: some View {
         GeometryReader { reader in
