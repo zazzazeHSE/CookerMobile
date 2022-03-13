@@ -1,0 +1,14 @@
+CREATE TABLE IngredientInCart  (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    value TEXT NOT NULL
+);
+
+getAllIngredientsInCart:
+SELECT * FROM IngredientInCart;
+
+insertOrUpdateIngredientsInCart:
+INSERT OR REPLACE INTO IngredientInCart(id, name, value) VALUES (?, ?, ?);
+
+deleteIngredientInCart:
+DELETE FROM IngredientInCart WHERE id == :id;

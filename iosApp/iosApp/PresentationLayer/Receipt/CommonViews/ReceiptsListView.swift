@@ -22,6 +22,12 @@ struct ReceiptsListView<VM>: View where VM: ReceiptsListViewModel {
     }
 
     @ViewBuilder private func receiptsList(model: ReceiptsListModel) -> some View {
+        if
+            let receipts = model.receipts,
+            receipts.isEmpty
+        {
+            Text("Нет доступных рецептов")
+        }
         List {
             ForEach(model.receipts ?? [], id: \.id) { receipt in
                 ReceiptListItemView(

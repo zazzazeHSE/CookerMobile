@@ -37,6 +37,9 @@
 		8467FDF627DE05820088A20B /* FavouritesReceiptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF527DE05820088A20B /* FavouritesReceiptsView.swift */; };
 		8467FDF827DE059D0088A20B /* FavoutitesReceiptsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF727DE059D0088A20B /* FavoutitesReceiptsViewModel.swift */; };
 		8467FDFA27DE0B820088A20B /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF927DE0B820088A20B /* BaseViewModel.swift */; };
+		8467FDFC27DE26530088A20B /* IngredientsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDFB27DE26530088A20B /* IngredientsListView.swift */; };
+		8467FDFF27DE34130088A20B /* IngredientsCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDFE27DE34130088A20B /* IngredientsCartView.swift */; };
+		8467FE0127DE34320088A20B /* IngredientsCartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FE0027DE34320088A20B /* IngredientsCartViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,6 +88,9 @@
 		8467FDF527DE05820088A20B /* FavouritesReceiptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouritesReceiptsView.swift; sourceTree = "<group>"; };
 		8467FDF727DE059D0088A20B /* FavoutitesReceiptsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoutitesReceiptsViewModel.swift; sourceTree = "<group>"; };
 		8467FDF927DE0B820088A20B /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
+		8467FDFB27DE26530088A20B /* IngredientsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientsListView.swift; sourceTree = "<group>"; };
+		8467FDFE27DE34130088A20B /* IngredientsCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientsCartView.swift; sourceTree = "<group>"; };
+		8467FE0027DE34320088A20B /* IngredientsCartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientsCartViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +212,7 @@
 		8451D4DE27CEB6F7005FC01E /* Receipt */ = {
 			isa = PBXGroup;
 			children = (
+				8467FDFD27DE34060088A20B /* Cart */,
 				8467FDF227DE02660088A20B /* FavouritesList */,
 				8467FDDD27DCC2900088A20B /* ReceiptsList */,
 				8451D4DF27CEB708005FC01E /* CommonViews */,
@@ -219,6 +226,7 @@
 			children = (
 				8451D4D827CEA8E4005FC01E /* ReceiptImageView.swift */,
 				8467FDF327DE04FA0088A20B /* ReceiptsListView.swift */,
+				8467FDFB27DE26530088A20B /* IngredientsListView.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -286,6 +294,15 @@
 				8467FDF727DE059D0088A20B /* FavoutitesReceiptsViewModel.swift */,
 			);
 			path = FavouritesList;
+			sourceTree = "<group>";
+		};
+		8467FDFD27DE34060088A20B /* Cart */ = {
+			isa = PBXGroup;
+			children = (
+				8467FDFE27DE34130088A20B /* IngredientsCartView.swift */,
+				8467FE0027DE34320088A20B /* IngredientsCartViewModel.swift */,
+			);
+			path = Cart;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -393,6 +410,7 @@
 				8467FDEF27DCC8620088A20B /* TimeSelectionViewModel.swift in Sources */,
 				8467FDFA27DE0B820088A20B /* BaseViewModel.swift in Sources */,
 				8451D4D927CEA8E4005FC01E /* ReceiptImageView.swift in Sources */,
+				8467FDFF27DE34130088A20B /* IngredientsCartView.swift in Sources */,
 				8467FDDA27DCAAF80088A20B /* FlowController.swift in Sources */,
 				8467FDF127DCF6DA0088A20B /* Observer.swift in Sources */,
 				8467FDF827DE059D0088A20B /* FavoutitesReceiptsViewModel.swift in Sources */,
@@ -401,12 +419,14 @@
 				8467FDD027DC977D0088A20B /* Model.swift in Sources */,
 				8467FDCB27DC8EBC0088A20B /* SimpleRecipe.swift in Sources */,
 				8467FDE827DCC2900088A20B /* ReceiptListItemView.swift in Sources */,
+				8467FE0127DE34320088A20B /* IngredientsCartViewModel.swift in Sources */,
 				8467FDF627DE05820088A20B /* FavouritesReceiptsView.swift in Sources */,
 				8467FDDC27DCAB430088A20B /* FlowControllerView.swift in Sources */,
 				8467FDD827DCAAA60088A20B /* Flow.swift in Sources */,
 				8467FDE627DCC2900088A20B /* CategoriesReceiptsListView.swift in Sources */,
 				843D698827D76A6400DEA4AD /* Changeable.swift in Sources */,
 				8467FDF427DE04FA0088A20B /* ReceiptsListView.swift in Sources */,
+				8467FDFC27DE26530088A20B /* IngredientsListView.swift in Sources */,
 				8467FDE927DCC2900088A20B /* ReceiptsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

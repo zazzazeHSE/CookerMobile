@@ -57,5 +57,9 @@ extension FlowController: FlowControllerViewDelegate {
             this.view?.navigate(to: .simpleRecipe, from: .favouritesList)
         }
     }
+
+    func makeIngredientsCartViewModel() -> IngredientsCartViewModel {
+        .init()
+    }
 }
 
