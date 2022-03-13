@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-class ReceiptsViewModel: ObservableObject {
+class ReceiptsViewModel: BaseViewModel<RecipesListState> {
     @Published var receiptsModel: Model<ReceiptsListModel> = .loading
     @Published var categoriesModel: Model<[CategoryModel]> = .loading
     private lazy var store: RecipesListStore = {
@@ -10,26 +10,17 @@ class ReceiptsViewModel: ObservableObject {
         return store
     }()
 
-    private lazy var collector: Observer = {
-        let collector = Observer { [weak self] value in
-            if let value = value as? RecipesListState? {
-                self?.didChangeState(value)
-            }
-        }
-        return collector
-    }()
-
     private let openRecipeView: (String) -> Void
 
     init(
         openRecipeView: @escaping (String) -> Void
     ) {
         self.openRecipeView = openRecipeView
-
+        super.init()
         store.reduce(action: RecipesListAction.Init())
     }
 
-    func didScrollToLastItem() {
+    private func didScrollToLastItem() {
         switch receiptsModel {
         case .data(let data):
             if data.isFull { return }
@@ -39,7 +30,7 @@ class ReceiptsViewModel: ObservableObject {
         store.reduce(action: RecipesListAction.LoadNextPage())
     }
 
-    func didTapToRecipe(_ recipe: Receipt) {
+    private func didTapToRecipe(_ recipe: Receipt) {
         openRecipeView(recipe.id)
     }
 
@@ -54,11 +45,11 @@ class ReceiptsViewModel: ObservableObject {
         )
     }
 
-    func didTapOnLikeForReceipt(_ recipe: Receipt) {
+    private func didTapOnLikeForReceipt(_ recipe: Receipt) {
         store.reduce(action: RecipesListAction.Like(id: recipe.id))
     }
 
-    private func didChangeState(_ state: RecipesListState?) {
+    override func didChangeState(_ state: RecipesListState?) {
         guard let state = state else {
             return
         }
@@ -98,6 +89,24 @@ class ReceiptsViewModel: ObservableObject {
         } else {
             categoriesModel = .loading
         }
+    }
+}
+
+extension ReceiptsViewModel: ReceiptsListViewModel {
+    var model: Model<ReceiptsListModel> {
+        receiptsModel
+    }
+
+    func onRecipeTap(_ receipt: Receipt) {
+        self.didTapToRecipe(receipt)
+    }
+
+    func onScrollToLast() {
+        self.didScrollToLastItem()
+    }
+
+    func onRecipeLikeButtonTap(_ receipt: Receipt) {
+        self.didTapOnLikeForReceipt(receipt)
     }
 }
 
