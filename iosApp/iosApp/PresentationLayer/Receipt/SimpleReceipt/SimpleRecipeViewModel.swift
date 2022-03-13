@@ -1,7 +1,7 @@
 import Foundation
 import shared
 
-final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState> {
+final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState, RecipeDetailsEffect> {
     @Published var recipeModel: Model<SimpleRecipe> = .loading
     private lazy var store: RecipeDetailsStore = {
         let store = RecipeDetailsStore()

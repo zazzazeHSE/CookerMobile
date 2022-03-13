@@ -6,7 +6,7 @@ protocol FlowControllerViewDelegate: AnyObject {
     func makeReceiptsListViewModel() -> ReceiptsViewModel
     func makeSimpleRecipeViewModel() -> SimpleRecipeViewModel
     func makeTimerViewModel() -> TimerViewModel
-    func makeTimeSelectionViewModel() -> TimeSelectionViewModel
+    func makeTimeSelectionViewModel() -> TimerViewModel
     func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel
     func makeIngredientsCartViewModel() -> IngredientsCartViewModel
 }
@@ -84,7 +84,7 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
-    private var timerSelectionView: LazyView<TimeSelectionView> {
+    private var timerSelectionView: LazyView<TimeSelectionView<TimerViewModel>> {
         return LazyView(
             TimeSelectionView(viewModel: delegate.makeTimeSelectionViewModel())
         )

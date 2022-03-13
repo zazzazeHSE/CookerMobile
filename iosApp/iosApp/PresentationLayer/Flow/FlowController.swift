@@ -8,6 +8,16 @@ protocol FlowControllerViewProtocol {
 class FlowController {
     private var flow = FlowStore()
     var view: FlowControllerViewProtocol?
+    private lazy var timerViewModel: TimerViewModel = {
+        return .init(
+            openTimerSelectionView: { [weak self] in
+                self?.view?.navigate(to: .timeSelectionView, from: .any)
+            },
+            closeTimeSelectionView: { [weak self] in
+                self?.view?.close(.timeSelectionView)
+            }
+        )
+    }()
 
     private struct FlowStore: Changeable {
         init(copy: ChangeableWrapper<FlowStore>) {
@@ -36,16 +46,11 @@ extension FlowController: FlowControllerViewDelegate {
     }
 
     func makeTimerViewModel() -> TimerViewModel {
-        .init { [weak self] in
-            guard let this = self else { return }
-            this.view?.navigate(to: .timeSelectionView, from: .any)
-        }
+        return timerViewModel
     }
 
-    func makeTimeSelectionViewModel() -> TimeSelectionViewModel {
-        .init { [weak self] in
-            self?.view?.close(.timeSelectionView)
-        }
+    func makeTimeSelectionViewModel() -> TimerViewModel {
+        return timerViewModel
     }
 
     func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel {

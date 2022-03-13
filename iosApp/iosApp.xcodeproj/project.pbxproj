@@ -31,7 +31,6 @@
 		8467FDE927DCC2900088A20B /* ReceiptsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDE327DCC2900088A20B /* ReceiptsViewModel.swift */; };
 		8467FDEA27DCC2900088A20B /* ReceiptsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDE427DCC2900088A20B /* ReceiptsListModel.swift */; };
 		8467FDED27DCC4560088A20B /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDEC27DCC4560088A20B /* TimerViewModel.swift */; };
-		8467FDEF27DCC8620088A20B /* TimeSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDEE27DCC8620088A20B /* TimeSelectionViewModel.swift */; };
 		8467FDF127DCF6DA0088A20B /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF027DCF6DA0088A20B /* Observer.swift */; };
 		8467FDF427DE04FA0088A20B /* ReceiptsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF327DE04FA0088A20B /* ReceiptsListView.swift */; };
 		8467FDF627DE05820088A20B /* FavouritesReceiptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467FDF527DE05820088A20B /* FavouritesReceiptsView.swift */; };
@@ -82,7 +81,6 @@
 		8467FDE327DCC2900088A20B /* ReceiptsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiptsViewModel.swift; sourceTree = "<group>"; };
 		8467FDE427DCC2900088A20B /* ReceiptsListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiptsListModel.swift; sourceTree = "<group>"; };
 		8467FDEC27DCC4560088A20B /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
-		8467FDEE27DCC8620088A20B /* TimeSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSelectionViewModel.swift; sourceTree = "<group>"; };
 		8467FDF027DCF6DA0088A20B /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
 		8467FDF327DE04FA0088A20B /* ReceiptsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptsListView.swift; sourceTree = "<group>"; };
 		8467FDF527DE05820088A20B /* FavouritesReceiptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouritesReceiptsView.swift; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 				8467FDBF27DBCFF60088A20B /* TimerView.swift */,
 				8467FDC127DBDBE50088A20B /* TimeSelectionView.swift */,
 				8467FDEC27DCC4560088A20B /* TimerViewModel.swift */,
-				8467FDEE27DCC8620088A20B /* TimeSelectionViewModel.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -407,7 +404,6 @@
 				842E389527CBFB8E000BF352 /* Images.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				8467FDEA27DCC2900088A20B /* ReceiptsListModel.swift in Sources */,
-				8467FDEF27DCC8620088A20B /* TimeSelectionViewModel.swift in Sources */,
 				8467FDFA27DE0B820088A20B /* BaseViewModel.swift in Sources */,
 				8451D4D927CEA8E4005FC01E /* ReceiptImageView.swift in Sources */,
 				8467FDFF27DE34130088A20B /* IngredientsCartView.swift in Sources */,

@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import shared
 
-final class IngredientsCartViewModel: BaseViewModel<IngredientsCartState> {
+final class IngredientsCartViewModel: BaseViewModel<IngredientsCartState, IngredientsCartEffect> {
     @Published var ingredientsModel: Model<[Ingredient]> = .loading
     private lazy var store: IngredientsCartStore = {
         let store = IngredientsCartStore()

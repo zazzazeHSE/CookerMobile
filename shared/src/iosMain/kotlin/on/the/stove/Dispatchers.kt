@@ -1,31 +1,15 @@
 package on.the.stove.dispatchers
 
-import kotlinx.coroutines.*
-import platform.darwin.dispatch_async
-import platform.darwin.dispatch_get_main_queue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlin.coroutines.CoroutineContext
-import kotlin.native.concurrent.*
 
 
 actual val ioDispatcher: CoroutineContext
-    get() = MainDispatcher
+    get() = Dispatchers.Main
 
 actual val uiDispatcher: CoroutineContext
-    get() = MainDispatcher
+    get() = Dispatchers.Default
 
 actual val ktorDispatcher: CoroutineContext
-    get() = GlobalScope.coroutineContext + MainDispatcher
-
-@ThreadLocal
-private object MainDispatcher : CoroutineDispatcher() {
-
-    override fun dispatch(context: CoroutineContext, block: Runnable) {
-        dispatch_async(dispatch_get_main_queue()) {
-            try {
-                block.run().freeze()
-            } catch (err: Throwable) {
-                throw err
-            }
-        }
-    }
-}
+    get() = GlobalScope.coroutineContext + Dispatchers.Main

@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import shared
 
-final class FavouritesReceiptsViewModel: BaseViewModel<FavouritesState> {
+final class FavouritesReceiptsViewModel: BaseViewModel<FavouritesState, FavouritesEffect> {
     @Published var model: Model<ReceiptsListModel> = .loading
     private lazy var store: FavouritesStore = {
         let store = FavouritesStore()
