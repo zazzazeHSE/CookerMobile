@@ -29,7 +29,7 @@ final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState, RecipeDetai
     }
 
     func didTapOnLikeForReceipt(_ recipe: SimpleRecipe) {
-        store.reduce(action: RecipeDetailsAction.Like(id: recipe.id))
+        store.reduce(action: RecipeDetailsAction.Like())
     }
 }
 

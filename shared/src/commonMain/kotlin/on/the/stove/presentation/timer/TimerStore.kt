@@ -35,7 +35,7 @@ class TimerStore : BaseStore<TimerState, TimerAction, TimerEffect>() {
                     action.timer.hours * 3600 + action.timer.minutes * 60 + action.timer.seconds
 
                 timerJob = scope.launch(ioDispatcher) {
-                    (seconds downTo 0).asFlow().onEach { delay(1000) }.collect { second ->
+                    ((seconds - 1) downTo 0).asFlow().onEach { delay(1000) }.collect { second ->
                         if (second == 0) {
                             updateState { state ->
                                 state.copy(timerResource = Resource.Loading)
@@ -54,6 +54,9 @@ class TimerStore : BaseStore<TimerState, TimerAction, TimerEffect>() {
                     }
                 }
                 sideEffectsFlow.emit(TimerEffect.HideTimeSelector)
+                updateState { state ->
+                    state.copy(timerResource = Resource.Data(action.timer))
+                }
             }
         }
     }
