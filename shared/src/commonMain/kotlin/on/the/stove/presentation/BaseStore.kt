@@ -16,9 +16,6 @@ import org.koin.core.component.KoinComponent
 @OptIn(ObsoleteCoroutinesApi::class)
 abstract class BaseStore<State, Action, Effect> : KoinComponent {
 
-    @Deprecated("Use flow")
-    private var updateCallback: ((state: State) -> Unit)? = null
-
     protected abstract val stateFlow: MutableStateFlow<State>
     protected abstract val sideEffectsFlow: MutableSharedFlow<Effect>
 
