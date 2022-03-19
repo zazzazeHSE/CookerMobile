@@ -2,9 +2,9 @@ package on.the.stove.database
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import on.the.stove.dto.Ingredient
+import on.the.stove.dto.Note
 import on.the.stove.dto.Recipe
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -63,7 +63,7 @@ internal class AppDatabaseRepositoryImpl : KoinComponent, AppDatabaseRepository 
     override fun getAllIngredients() = database.ingredientsTableQueries
         .getAllIngredientsInCart()
         .executeAsList()
-        .map {  it.toIngredient() }
+        .map { it.toIngredient() }
 
     override fun addIngredient(ingredient: Ingredient) = database
         .ingredientsTableQueries
@@ -75,4 +75,20 @@ internal class AppDatabaseRepositoryImpl : KoinComponent, AppDatabaseRepository 
 
     override fun removeIngredient(ingredient: Ingredient) = database.ingredientsTableQueries
         .deleteIngredientInCart(ingredient.id)
+
+    override fun getNote(recipeId: String) = runCatching {
+        database.notesTableQueries.getNote(id = recipeId).executeAsOne().let { note ->
+            Note(
+                id = note.id,
+                content = note.content,
+            )
+        }
+    }.getOrNull()
+
+    override fun updateNode(note: Note) {
+        database.notesTableQueries.insertNote(
+            id = note.id,
+            content = note.content,
+        )
+    }
 }

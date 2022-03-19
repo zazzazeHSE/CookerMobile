@@ -1,0 +1,10 @@
+CREATE TABLE NotesTable  (
+    id TEXT NOT NULL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
+getNote:
+SELECT * FROM NotesTable WHERE id == :id;
+
+insertNote:
+INSERT OR REPLACE INTO NotesTable(id, content) VALUES (?, ?);

@@ -11,7 +11,8 @@ final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState, RecipeDetai
 
     init(recipeId: String) {
         super.init()
-        store.reduce(action: RecipeDetailsAction.Init(id: recipeId))
+        // TODO: for Egor: please put (id: recipeId) to store constructor :3
+        store.reduce(action: RecipeDetailsAction.Init())
     }
 
     override func didChangeState(_ state: RecipeDetailsState?) {
