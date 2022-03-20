@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NamedNavArgument
@@ -43,6 +44,12 @@ sealed class NavigationScreen(open val route: String) {
             route = "favourites",
             resourceId = strings.tab_name_favourites,
             Icons.Rounded.Favorite
+        )
+
+        object Search : BottomNavigationScreen(
+            route = "search",
+            resourceId = strings.tab_name_search,
+            Icons.Rounded.Search,
         )
     }
 

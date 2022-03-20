@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="tab_name_recipes">Recipes</string>
-    <string name="tab_name_article">Articles</string>
+    <string name="tab_name_search">Search</string>
     <string name="tab_name_favourites">Favourites</string>
     <string name="tab_name_cart">Cart</string>
 </resources>

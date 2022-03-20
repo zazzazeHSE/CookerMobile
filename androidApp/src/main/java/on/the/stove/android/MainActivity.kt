@@ -22,10 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import on.the.stove.android.ext.requireGetString
 import on.the.stove.android.navigation.NavigationScreen.BottomNavigationScreen
 import on.the.stove.android.navigation.NavigationScreen.RecipeDetails
-import on.the.stove.android.screens.FavouritesScreen
-import on.the.stove.android.screens.IngredientsCardScreen
-import on.the.stove.android.screens.RecipeDetailsScreen
-import on.the.stove.android.screens.RecipesListScreen
+import on.the.stove.android.screens.*
 import on.the.stove.android.theme.OnTheStoveTheme
 import on.the.stove.android.view.TimerFloatingAction
 import on.the.stove.presentation.timer.TimerStore
@@ -45,6 +42,7 @@ val bottomNavigationItems = listOf(
     BottomNavigationScreen.Recipes,
     BottomNavigationScreen.Cart,
     BottomNavigationScreen.Favorites,
+    BottomNavigationScreen.Search,
 )
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -130,6 +128,7 @@ fun MainScreen(fragmentManager: FragmentManager) {
                     }
                 )
             }
+            composable(BottomNavigationScreen.Search.route) { SearchRecipesScreen(navHostController = navController) }
         }
     }
 }
