@@ -4,14 +4,14 @@ package on.the.stove.presentation.recipeDetails
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import on.the.stove.core.Resource
 import on.the.stove.core.toResource
 import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
 import on.the.stove.dto.Ingredient
-import on.the.stove.dto.Note
 import on.the.stove.dto.Recipe
 import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipesApi
@@ -27,22 +27,6 @@ class RecipeDetailsStore(private val recipeId: String) :
     override val stateFlow: MutableStateFlow<RecipeDetailsState> =
         MutableStateFlow(RecipeDetailsState(recipeId))
     override val sideEffectsFlow: MutableSharedFlow<RecipeDetailsEffect> = MutableSharedFlow()
-
-    private val noteContentSharedFlow = MutableSharedFlow<String>()
-    private val noteFlow = noteContentSharedFlow
-        .distinctUntilChanged()
-        .debounce(300L)
-
-    init {
-        scope.launch(ioDispatcher) {
-            noteFlow.collect { content ->
-                Note(
-                    id = recipeId,
-                    content = content,
-                ).also(appDatabaseRepository::updateNode)
-            }
-        }
-    }
 
     override suspend fun reduce(action: RecipeDetailsAction, initialState: RecipeDetailsState) {
         when (action) {
@@ -68,16 +52,6 @@ class RecipeDetailsStore(private val recipeId: String) :
                 } else {
                     appDatabaseRepository.addIngredient(ingredient)
                 }
-            }
-            is RecipeDetailsAction.OpenNote -> {
-                val note = appDatabaseRepository.getNote(stateFlow.value.recipeId)
-
-                val content = note?.content.orEmpty()
-
-                sideEffectsFlow.emit(RecipeDetailsEffect.OpenNote(content = content))
-            }
-            is RecipeDetailsAction.SetNoteContent -> {
-                noteContentSharedFlow.emit(action.content)
             }
         }
     }

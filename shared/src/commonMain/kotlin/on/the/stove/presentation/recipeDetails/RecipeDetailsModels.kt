@@ -14,13 +14,10 @@ sealed class RecipeDetailsAction {
     object Init : RecipeDetailsAction()
 
     object Like : RecipeDetailsAction()
-    object OpenNote: RecipeDetailsAction()
-    data class SetNoteContent(val content: String) : RecipeDetailsAction()
 
-    data class SelectIngredient(val ingredient: Ingredient): RecipeDetailsAction()
+    data class SelectIngredient(val ingredient: Ingredient) : RecipeDetailsAction()
 }
 
 sealed class RecipeDetailsEffect {
-
-    data class OpenNote(val content: String): RecipeDetailsEffect()
+    // Empty
 }

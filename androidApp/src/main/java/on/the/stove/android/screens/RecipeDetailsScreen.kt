@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
@@ -31,10 +30,9 @@ import kotlinx.coroutines.launch
 import on.the.stove.android.theme.shimmerTheme
 import on.the.stove.android.view.IngredientsList
 import on.the.stove.core.Resource
-import on.the.stove.dto.Ingredient
 import on.the.stove.dto.RecipeDetails
 import on.the.stove.presentation.recipeDetails.RecipeDetailsAction
-import on.the.stove.presentation.recipeDetails.RecipeDetailsStore
+import on.the.stove.presentation.recipeNote.RecipeDetailsStore
 
 @Composable
 fun RecipeDetailsScreen(recipeId: String, onBack: () -> Unit) {
