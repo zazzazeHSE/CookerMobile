@@ -4,9 +4,11 @@ import on.the.stove.core.Resource
 import on.the.stove.dto.Recipe
 
 data class SearchRecipesState(
-    val searchQuery: String = "",
     val recipesResource: Resource<List<Recipe>> = Resource.Data(emptyList()),
     val isPaginationLoading: Boolean = false,
+    val isPaginationError: Boolean = false,
+    val page: Int = 1,
+    val searchQuery: String = "",
 )
 
 sealed class SearchRecipesAction {
