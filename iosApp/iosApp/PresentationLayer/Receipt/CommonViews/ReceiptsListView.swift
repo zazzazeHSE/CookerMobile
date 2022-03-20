@@ -60,6 +60,9 @@ struct ReceiptsListView<VM>: View where VM: ReceiptsListViewModel {
                 .listRowBackground(Color.white)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            EmptyView().frame(width: 0, height: 50)
+        }
         .listStyle(PlainListStyle())
         .background(.white)
     }

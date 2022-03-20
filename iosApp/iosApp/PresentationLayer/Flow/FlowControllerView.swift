@@ -9,6 +9,8 @@ protocol FlowControllerViewDelegate: AnyObject {
     func makeTimeSelectionViewModel() -> TimerViewModel
     func makeFavouritesReceiptsViewModel() -> FavouritesReceiptsViewModel
     func makeIngredientsCartViewModel() -> IngredientsCartViewModel
+    func makeNoteIconViewModel() -> NoteIconViewModelImpl
+    func makeNoteInputViewModel() -> NoteInputViewModelImpl
 }
 
 enum Screen {
@@ -17,6 +19,7 @@ enum Screen {
     case favouritesList
     case simpleRecipe
     case timeSelectionView
+    case noteInputView
 }
 
 struct FlowControllerView: View, FlowControllerViewProtocol {
@@ -25,12 +28,14 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
     private let navigateToSimpleRecipeScreenFromMain = FlowState()
     private let navigateToSimpleRecipeScreenFromFavourites = FlowState()
     private let showTimerSelectionScreen = FlowState()
+    private let showNoteIconView = FlowState()
+    private let showNoteInputView = FlowState()
 
     init(modelDelegate: FlowControllerViewDelegate) {
         self.delegate = modelDelegate
     }
 
-    func navigate(to navigateTo: Screen, from: Screen) {
+    func navigate(to navigateTo: Screen) {
         switch navigateTo {
         case .any:
             break
@@ -39,28 +44,22 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         case .favouritesList:
             break
         case .simpleRecipe:
-            if from == .receiptsList {
-                navigateToSimpleRecipeScreenFromMain.next = true
-            } else if from == .favouritesList {
-                navigateToSimpleRecipeScreenFromFavourites.next = true
-            }
+            navigateToSimpleRecipeScreenFromMain.next = true
+            withAnimation { showNoteIconView.next = true }
         case .timeSelectionView:
             withAnimation { showTimerSelectionScreen.next = true }
+        case .noteInputView:
+            withAnimation { showNoteInputView.next = true }
         }
     }
 
     func close(_ screen: Screen) {
         switch screen {
-        case .any:
-            break
-        case .receiptsList:
-            break
-        case .favouritesList:
-            break
-        case .simpleRecipe:
-            break
         case .timeSelectionView:
             withAnimation { showTimerSelectionScreen.next = false }
+        case .noteInputView:
+            withAnimation { showNoteInputView.next = false }
+        default: break
         }
     }
 
@@ -84,9 +83,21 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
+    private var noteIconView: LazyView<NoteIconView<NoteIconViewModelImpl>> {
+        return LazyView(
+            NoteIconView(viewModel: delegate.makeNoteIconViewModel())
+        )
+    }
+
     private var timerSelectionView: LazyView<TimeSelectionView<TimerViewModel>> {
         return LazyView(
             TimeSelectionView(viewModel: delegate.makeTimeSelectionViewModel())
+        )
+    }
+
+    private var noteInputView: LazyView<NoteView<NoteInputViewModelImpl>> {
+        return LazyView(
+            NoteView(viewModel: delegate.makeNoteInputViewModel())
         )
     }
 
@@ -102,58 +113,125 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
+    @State var tabBarVisible = false
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            TabView {
-                NavigationView {
-                    VStack {
-                        receiptsListScreen
-                        Flow(state: navigateToSimpleRecipeScreenFromMain) {
-                            simpleRecipeScreen
+            NavigationView {
+                VStack {
+                    TabView {
+                        NavigationView {
+                            receiptsListScreen
                         }
-                    }
-                }
-                .tabItem {
-                    Image(systemName: "list.bullet.rectangle.fill")
-                    Text("Рецепты")
-                }
-                .tag(0)
+                            .tabItem {
+                                Image(systemName: "list.bullet.rectangle.fill")
+                                Text("Рецепты")
+                            }
+                            .tag(0)
 
-                NavigationView {
-                    VStack {
-                        favouritesReceiptsScreen
-                        Flow(state: navigateToSimpleRecipeScreenFromFavourites) {
-                            simpleRecipeScreen
+                        NavigationView {
+                            favouritesReceiptsScreen
                         }
-                    }
-                }
-                .tabItem {
-                    Image(systemName: "heart")
-                    Text("Понравившиеся")
-                }
-                .tag(1)
+                            .tabItem {
+                                Image(systemName: "heart")
+                                Text("Понравившиеся")
+                            }
+                            .tag(1)
 
-                NavigationView {
-                    VStack {
-                        ingredientsCartScreen
+                        NavigationView {
+                            ingredientsCartScreen
+                        }
+                            .tabItem {
+                                Image(systemName: "cart")
+                                Text("Корзина")
+                            }
+                            .tag(2)
+                    }
+                        .accentColor(Colors.orange)
+                        .onAppear {
+                            UITabBar.appearance().barTintColor = .white
+                            withAnimation {
+                                tabBarVisible = true
+                                showNoteIconView.next = false
+                            }
+                        }
+                        .onWillDisappear {
+                            print("disappear")
+                            withAnimation { tabBarVisible = false }
+                        }
+
+                    Flow(state: navigateToSimpleRecipeScreenFromMain) {
+                        simpleRecipeScreen
                     }
                 }
-                .tabItem {
-                    Image(systemName: "cart")
-                    Text("Корзина")
+                .navigationBarHidden(true)
+            }
+
+            HStack {
+                VisibleFlow(state: showNoteIconView) {
+                    noteIconView
                 }
-                .tag(2)
+                Spacer()
+                timerView
             }
-            .accentColor(Colors.orange)
-            .onAppear {
-                UITabBar.appearance().barTintColor = .white
-            }
-            timerView
                 .padding()
-                .padding(.bottom, 50)
-            OverFlow(state: showTimerSelectionScreen) {
+                .padding(.bottom, tabBarVisible ? 50 : 0)
+            VisibleFlow(state: showTimerSelectionScreen) {
                 timerSelectionView
             }
+            VisibleFlow(state: showNoteInputView) {
+                noteInputView
+            }
         }
+    }
+}
+
+struct WillDisappearHandler: UIViewControllerRepresentable {
+    func makeCoordinator() -> WillDisappearHandler.Coordinator {
+        Coordinator(onWillDisappear: onWillDisappear)
+    }
+
+    let onWillDisappear: () -> Void
+
+    func makeUIViewController(context: UIViewControllerRepresentableContext<WillDisappearHandler>) -> UIViewController {
+        context.coordinator
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<WillDisappearHandler>) {
+    }
+
+    typealias UIViewControllerType = UIViewController
+
+    class Coordinator: UIViewController {
+        let onWillDisappear: () -> Void
+
+        init(onWillDisappear: @escaping () -> Void) {
+            self.onWillDisappear = onWillDisappear
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            onWillDisappear()
+        }
+    }
+}
+
+struct WillDisappearModifier: ViewModifier {
+    let callback: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .background(WillDisappearHandler(onWillDisappear: callback))
+    }
+}
+
+extension View {
+    func onWillDisappear(_ perform: @escaping () -> Void) -> some View {
+        self.modifier(WillDisappearModifier(callback: perform))
     }
 }

@@ -35,6 +35,7 @@ struct TimeSelectionView<ViewModel>: View where ViewModel: TimeSelectionViewMode
                     )
                     Spacer()
                 }
+                .onTapGesture { }
                 Spacer()
             }
             .background(.ultraThinMaterial)

@@ -3,15 +3,19 @@ import shared
 
 final class SimpleRecipeViewModel: BaseViewModel<RecipeDetailsState, RecipeDetailsEffect> {
     @Published var recipeModel: Model<SimpleRecipe> = .loading
-    private lazy var store: RecipeDetailsStore = {
-        let store = RecipeDetailsStore()
-        store.observeState().collect(collector: collector, completionHandler: {_,_ in })
-        return store
-    }()
+    @Published var inputText: String
+    private let store: RecipeDetailsStore
+    private let onCloseNoteInputView: () -> Void
 
-    init(recipeId: String) {
+    init(
+        recipeId: String,
+        onCloseNoteInputView: @escaping () -> Void
+    ) {
+        self.store = RecipeDetailsStore(recipeId: recipeId)
+        self.onCloseNoteInputView = onCloseNoteInputView
+        self.inputText = ""
         super.init()
-        // TODO: for Egor: please put (id: recipeId) to store constructor :3
+        store.observeState().collect(collector: collector, completionHandler: {_,_ in })
         store.reduce(action: RecipeDetailsAction.Init())
     }
 
@@ -51,8 +55,6 @@ extension SimpleRecipeViewModel: IngredientsListViewModel {
             )
         )
     }
-
-
 }
 
 extension SimpleRecipeViewModel {

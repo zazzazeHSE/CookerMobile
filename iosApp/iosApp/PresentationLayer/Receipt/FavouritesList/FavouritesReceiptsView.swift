@@ -4,7 +4,9 @@ struct FavouritesReceiptsView: View {
     @ObservedObject var viewModel: FavouritesReceiptsViewModel
 
     var body: some View {
-        ReceiptsListView(viewModel: viewModel)
+        VStack {
+            ReceiptsListView(viewModel: viewModel)
+        }
             .navigationTitle("Понравившиеся рецепты")
     }
 }
