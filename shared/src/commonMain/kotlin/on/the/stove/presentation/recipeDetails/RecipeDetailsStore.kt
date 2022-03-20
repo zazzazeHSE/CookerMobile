@@ -17,7 +17,6 @@ import on.the.stove.presentation.BaseStore
 import on.the.stove.services.network.RecipesApi
 import org.koin.core.component.inject
 
-
 class RecipeDetailsStore(private val recipeId: String) :
     BaseStore<RecipeDetailsState, RecipeDetailsAction, RecipeDetailsEffect>() {
 

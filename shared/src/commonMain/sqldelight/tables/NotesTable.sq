@@ -1,4 +1,4 @@
-CREATE TABLE NotesTable  (
+CREATE TABLE NotesTable(
     id TEXT NOT NULL PRIMARY KEY,
     content TEXT NOT NULL
 );

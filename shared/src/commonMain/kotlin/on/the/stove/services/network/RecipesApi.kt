@@ -16,6 +16,8 @@ internal interface RecipesApi {
     suspend fun getRecipesList(page: Int?, category: Category): Result<List<Recipe>>
 
     suspend fun getRecipeDetails(id: String): Result<RecipeDetails>
+
+    suspend fun getSearchRecipesList(searchQuery: String, page: Int?): Result<List<Recipe>>
 }
 
 internal class RecipeApiImpl : RecipesApi, KoinComponent {
@@ -39,6 +41,20 @@ internal class RecipeApiImpl : RecipesApi, KoinComponent {
             runCatching<Response<RecipeDetails>> {
                 client.get("$hostUrl/recipe/show") {
                     parameter("id", id)
+                }
+            }.map { it.payload }
+        }
+    }
+
+    override suspend fun getSearchRecipesList(
+        searchQuery: String,
+        page: Int?
+    ): Result<List<Recipe>> {
+        return withContext(ktorDispatcher) {
+            runCatching<Response<List<Recipe>>> {
+                client.get("$hostUrl/recipes/search") {
+                    parameter("page", page)
+                    parameter("searchInput", searchQuery)
                 }
             }.map { it.payload }
         }
