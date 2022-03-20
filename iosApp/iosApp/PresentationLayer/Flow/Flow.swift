@@ -22,7 +22,7 @@ struct Flow<Content>: View where Content: View {
     }
 }
 
-struct OverFlow<Content>: View where Content: View {
+struct VisibleFlow<Content>: View where Content: View {
     @ObservedObject var state: FlowState
     var content: Content
     var body: some View {
