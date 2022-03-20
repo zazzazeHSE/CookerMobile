@@ -8,9 +8,9 @@ data class IngredientsCartState(
 )
 
 sealed class IngredientsCartAction {
-    object Init: IngredientsCartAction()
+    object Init : IngredientsCartAction()
 
-    data class Select(val ingredient: Ingredient): IngredientsCartAction()
+    data class Select(val ingredient: Ingredient) : IngredientsCartAction()
 }
 
 sealed class IngredientsCartEffect {

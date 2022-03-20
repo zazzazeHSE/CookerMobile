@@ -11,7 +11,7 @@ val serializationVersion = "1.0.0-RC"
 val coroutinesVersion = "1.6.0-native-mt"
 val logbackVersion = "1.2.10"
 val sql_delight_version = "1.5.3"
-val koin_version= "3.1.2"
+val koin_version = "3.1.2"
 
 kotlin {
     android()

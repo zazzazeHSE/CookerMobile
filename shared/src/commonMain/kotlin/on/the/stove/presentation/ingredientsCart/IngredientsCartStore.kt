@@ -2,17 +2,17 @@ package on.the.stove.presentation.ingredientsCart
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import on.the.stove.core.toResource
 import on.the.stove.database.AppDatabaseRepository
 import on.the.stove.dispatchers.ioDispatcher
-import on.the.stove.dto.Ingredient
 import on.the.stove.presentation.BaseStore
 import org.koin.core.component.inject
 
-class IngredientsCartStore : BaseStore<IngredientsCartState, IngredientsCartAction, IngredientsCartEffect>()  {
-    override val stateFlow: MutableStateFlow<IngredientsCartState> = MutableStateFlow(IngredientsCartState())
+class IngredientsCartStore :
+    BaseStore<IngredientsCartState, IngredientsCartAction, IngredientsCartEffect>() {
+    override val stateFlow: MutableStateFlow<IngredientsCartState> =
+        MutableStateFlow(IngredientsCartState())
     override val sideEffectsFlow: MutableSharedFlow<IngredientsCartEffect> = MutableSharedFlow()
     private val appDatabaseRepository: AppDatabaseRepository by inject()
 

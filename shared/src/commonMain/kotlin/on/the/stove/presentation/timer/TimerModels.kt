@@ -13,12 +13,12 @@ data class TimerState(
 )
 
 sealed class TimerAction {
-    object Tap: TimerAction()
+    object Tap : TimerAction()
 
-    data class StartTimer(val timer: Timer): TimerAction()
+    data class StartTimer(val timer: Timer) : TimerAction()
 }
 
 sealed class TimerEffect {
-    object ShowTimeSelector: TimerEffect()
-    object HideTimeSelector: TimerEffect()
+    object ShowTimeSelector : TimerEffect()
+    object HideTimeSelector : TimerEffect()
 }

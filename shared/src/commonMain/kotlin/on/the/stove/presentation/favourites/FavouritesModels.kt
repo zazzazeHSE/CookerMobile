@@ -10,7 +10,7 @@ data class FavouritesState(
 sealed class FavouritesAction {
 
     object Init : FavouritesAction()
-    
+
     data class Like(val id: String) : FavouritesAction()
 }
 

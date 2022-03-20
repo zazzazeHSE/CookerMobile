@@ -5,8 +5,8 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.withContext
 import on.the.stove.dispatchers.ktorDispatcher
 import on.the.stove.dto.Category
-import on.the.stove.dto.RecipeDetails
 import on.the.stove.dto.Recipe
+import on.the.stove.dto.RecipeDetails
 import on.the.stove.services.responseModels.Response
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

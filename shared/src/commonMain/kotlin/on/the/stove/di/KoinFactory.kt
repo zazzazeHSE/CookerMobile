@@ -19,9 +19,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     }
 
 fun initKoin() = initKoin {
-        val log = Logger(config = StaticConfig(), tag = "KOIN_")
-        log.d("initKoin ios")
-    }
+    val log = Logger(config = StaticConfig(), tag = "KOIN_")
+    log.d("initKoin ios")
+}
 
 val commonModule = module {
     single { AppDatabaseRepositoryImpl() } bind AppDatabaseRepository::class

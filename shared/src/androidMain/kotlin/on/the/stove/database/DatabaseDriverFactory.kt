@@ -7,6 +7,6 @@ import tables.AppDatabase
 
 actual class DatabaseDriverFactory(private val context: Context) {
     actual fun createDriver(): SqlDriver {
-       return AndroidSqliteDriver(AppDatabase.Schema, context, "recipes1.db")
+        return AndroidSqliteDriver(AppDatabase.Schema, context, "recipes1.db")
     }
 }
