@@ -2,6 +2,7 @@ import Foundation
 
 struct ReceiptsListModel {
     var receipts: [Receipt]?
+    var isPaginationLoading: Bool
     var isFull: Bool
 }
 

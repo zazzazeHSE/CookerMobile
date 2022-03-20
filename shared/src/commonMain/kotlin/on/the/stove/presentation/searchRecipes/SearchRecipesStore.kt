@@ -50,14 +50,14 @@ class SearchRecipesStore :
                         )
                     }
 
-                    flow<Result<List<Recipe>>> {
-                        val state = stateFlow.value
+                    val state = stateFlow.value
 
+                    flowOf(
                         recipesApi.getSearchRecipesList(
                             searchQuery = state.searchQuery,
                             page = state.page
                         )
-                    }
+                    )
                 }.collectLatest { result ->
                     result.fold(
                         onSuccess = { recipes ->
@@ -65,6 +65,7 @@ class SearchRecipesStore :
                                 updateState { state ->
                                     state.copy(
                                         recipesResource = it.toResource(),
+                                        isPaginationLoading = false,
                                     )
                                 }
                             }
@@ -73,6 +74,7 @@ class SearchRecipesStore :
                             updateState { state ->
                                 state.copy(
                                     recipesResource = it.toResource(),
+                                    isPaginationLoading = false,
                                 )
                             }
                         }
@@ -92,6 +94,7 @@ class SearchRecipesStore :
                         searchQuery = action.searchQuery,
                     )
                 }
+                searchQuerySharedFlow.emit(action.searchQuery)
             }
             is SearchRecipesAction.Like -> {
                 val recipe = stateFlow.value.recipesResource.value!!.first { recipe ->
@@ -121,12 +124,14 @@ class SearchRecipesStore :
                         page = state.page,
                     ).fold(
                         onSuccess = { newRecipes ->
+                            val isFull = newRecipes.isEmpty()
                             newRecipes.mergeCachedAndInvoke {
                                 updateState { state ->
                                     state.copy(
                                         recipesResource = (state.recipesResource.value!! + it).toResource(),
                                         isPaginationLoading = false,
                                         isPaginationError = false,
+                                        isPaginationFull = isFull,
                                     )
                                 }
                             }

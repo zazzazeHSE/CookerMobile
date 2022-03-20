@@ -23,7 +23,13 @@ final class FavouritesReceiptsViewModel: BaseViewModel<FavouritesState, Favourit
     override func didChangeState(_ state: FavouritesState?) {
         if let models = state?.recipesResource.value as? [Recipe] {
             let newModels = dtoToReceiptsModel(models)
-            model = .data(.init(receipts: newModels, isFull: true))
+            model = .data(
+                .init(
+                    receipts: newModels,
+                    isPaginationLoading: false,
+                    isFull: true
+                )
+            )
         } else if let error = state?.recipesResource.throwable {
             model = .error(error.message ?? "Unexpected error")
         } else {

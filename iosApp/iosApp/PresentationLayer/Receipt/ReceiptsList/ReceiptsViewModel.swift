@@ -62,7 +62,13 @@ class ReceiptsViewModel: BaseViewModel<RecipesListState, RecipesListEffect> {
         if let models = state.recipesResource.value as? [Recipe] {
             let newModels = dtoToReceiptsModel(models)
             let isFull = state.isPaginationFull
-            receiptsModel = .data(.init(receipts: newModels, isFull: isFull))
+            receiptsModel = .data(
+                .init(
+                    receipts: newModels,
+                    isPaginationLoading: state.isPaginationRecipesLoading,
+                    isFull: isFull
+                )
+            )
         } else if let error = state.recipesResource.throwable {
             receiptsModel = .error(error.message ?? "Unexpected error")
         } else {
