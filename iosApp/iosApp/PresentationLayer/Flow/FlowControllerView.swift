@@ -11,6 +11,7 @@ protocol FlowControllerViewDelegate: AnyObject {
     func makeIngredientsCartViewModel() -> IngredientsCartViewModel
     func makeNoteIconViewModel() -> NoteIconViewModelImpl
     func makeNoteInputViewModel() -> NoteInputViewModelImpl
+    func makeSearchListViewModel() -> SearchListViewModelImpl
 }
 
 enum Screen {
@@ -113,6 +114,12 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
         )
     }
 
+    private var searchScreen: LazyView<SearchListView<SearchListViewModelImpl>> {
+        return LazyView(
+            SearchListView(viewModel: delegate.makeSearchListViewModel())
+        )
+    }
+
     @State var tabBarVisible = false
 
     var body: some View {
@@ -130,13 +137,22 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
                             .tag(0)
 
                         NavigationView {
+                            searchScreen
+                        }
+                            .tabItem {
+                                Image(systemName: "magnifyingglass")
+                                Text("Поиск")
+                            }
+                            .tag(1)
+
+                        NavigationView {
                             favouritesReceiptsScreen
                         }
                             .tabItem {
                                 Image(systemName: "heart")
                                 Text("Понравившиеся")
                             }
-                            .tag(1)
+                            .tag(2)
 
                         NavigationView {
                             ingredientsCartScreen
@@ -145,7 +161,7 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
                                 Image(systemName: "cart")
                                 Text("Корзина")
                             }
-                            .tag(2)
+                            .tag(3)
                     }
                         .accentColor(Colors.orange)
                         .onAppear {
@@ -156,7 +172,6 @@ struct FlowControllerView: View, FlowControllerViewProtocol {
                             }
                         }
                         .onWillDisappear {
-                            print("disappear")
                             withAnimation { tabBarVisible = false }
                         }
 

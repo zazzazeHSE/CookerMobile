@@ -49,7 +49,7 @@ struct ReceiptsListView<VM>: View where VM: ReceiptsListViewModel {
             .listRowInsets(EdgeInsets())
             .listRowSeparator(.hidden)
             .listRowBackground(Color.white)
-            if model.isFull == false {
+            if model.isPaginationLoading {
                 HStack(alignment: .center) {
                     Spacer()
                     ProgressView()

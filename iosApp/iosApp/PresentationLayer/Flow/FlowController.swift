@@ -39,6 +39,16 @@ class FlowController {
         }
     }()
 
+    private lazy var searchListViewModel: SearchListViewModelImpl = {
+        .init { [weak self] recipeId in
+            guard let this = self else { return }
+            this.flow = this.flow.changing { copy in
+                copy.simpleRecipeId = recipeId
+            }
+            this.view?.navigate(to: .simpleRecipe)
+        }
+    }()
+
     private struct FlowStore: Changeable {
         init(copy: ChangeableWrapper<FlowStore>) {
             self.simpleRecipeId = copy.simpleRecipeId
@@ -96,6 +106,10 @@ extension FlowController: FlowControllerViewDelegate {
                 self?.view?.close(.noteInputView)
             }
         )
+    }
+
+    func makeSearchListViewModel() -> SearchListViewModelImpl {
+        searchListViewModel
     }
 }
 

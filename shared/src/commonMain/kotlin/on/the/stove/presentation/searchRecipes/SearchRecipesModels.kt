@@ -9,6 +9,7 @@ data class SearchRecipesState(
     val isPaginationError: Boolean = false,
     val page: Int = 1,
     val searchQuery: String = "",
+    val isPaginationFull: Boolean = false
 )
 
 sealed class SearchRecipesAction {
