@@ -1,6 +1,9 @@
 package on.the.stove.android.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -8,10 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.rounded.NoteAdd
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,19 +33,31 @@ import on.the.stove.android.view.IngredientsList
 import on.the.stove.core.Resource
 import on.the.stove.dto.RecipeDetails
 import on.the.stove.presentation.recipeDetails.RecipeDetailsAction
-import on.the.stove.presentation.recipeNote.RecipeDetailsStore
+import on.the.stove.presentation.recipeDetails.RecipeDetailsStore
 
 @Composable
 fun RecipeDetailsScreen(recipeId: String, onBack: () -> Unit) {
-    val recipeDetailsStore = remember { RecipeDetailsStore() }
+    val recipeDetailsStore = remember { RecipeDetailsStore(recipeId = recipeId) }
 
     LaunchedEffect(recipeDetailsStore) {
-        recipeDetailsStore.reduce(RecipeDetailsAction.Init(id = recipeId))
+        recipeDetailsStore.reduce(RecipeDetailsAction.Init)
     }
 
     val state = recipeDetailsStore.observeState().collectAsState()
+    val isNoteClosed = remember { mutableStateOf(true) }
 
     Scaffold(
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { isNoteClosed.value = false },
+                backgroundColor = MaterialTheme.colors.primary,
+                icon = {
+                    Icon(Icons.Rounded.NoteAdd, contentDescription = null, tint = Color.White)
+                }, text = {
+                    Text("Заметка", color = Color.White)
+                })
+        },
+        floatingActionButtonPosition = FabPosition.Center,
         topBar = {
             TopAppBar(
                 title = {
@@ -92,10 +105,13 @@ fun RecipeDetailsScreen(recipeId: String, onBack: () -> Unit) {
             is Resource.Loading -> {
 
             }
-            is Resource.Data -> RecipeDetailsScreen(
-                recipeRes.value,
-                recipeDetailsStore = recipeDetailsStore
-            )
+            is Resource.Data -> {
+                RecipeDetailsScreen(
+                    recipeRes.value,
+                    recipeDetailsStore = recipeDetailsStore
+                )
+                NoteDialog(isClosed = isNoteClosed, recipeId = recipeId)
+            }
         }
     }
 }
